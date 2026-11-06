@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>machineGASHAPON - Mesin Gacha Tanpa Batas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .font-game {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Machine Shake Animation */
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-4px, 4px) rotate(-1.5deg); }
+            40% { transform: translate(4px, -4px) rotate(1.5deg); }
+            60% { transform: translate(-4px, -2px) rotate(-1deg); }
+            80% { transform: translate(4px, 2px) rotate(1deg); }
+        }
+
+        .animate-shake {
+            animation: shake 0.1s infinite;
+        }
+
+        /* Chaotic Ball Bouncing Animations */
+        @keyframes chaos-bounce-1 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, -80px) rotate(140deg); }
+            50% { transform: translate(-40px, -120px) rotate(260deg); }
+            75% { transform: translate(55px, -50px) rotate(320deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        @keyframes chaos-bounce-2 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            30% { transform: translate(-55px, -100px) rotate(-160deg); }
+            60% { transform: translate(45px, -130px) rotate(160deg); }
+            85% { transform: translate(-30px, -40px) rotate(-280deg); }
+            100% { transform: translate(0, 0) rotate(-360deg); }
+        }
+
+        @keyframes chaos-bounce-3 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(35px, -110px) rotate(180deg); }
+            45% { transform: translate(-50px, -60px) rotate(-130deg); }
+            70% { transform: translate(25px, -125px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(-360deg); }
+        }
+
+        .bouncing-ball-1 { animation: chaos-bounce-1 0.28s infinite linear; }
+        .bouncing-ball-2 { animation: chaos-bounce-2 0.23s infinite linear; }
+        .bouncing-ball-3 { animation: chaos-bounce-3 0.26s infinite linear; }
+
+        @keyframes capsule-drop {
+            0% { transform: translateY(-40px) scale(0.2) rotate(0deg); opacity: 0; }
+            60% { transform: translateY(10px) scale(1.1) rotate(180deg); opacity: 1; }
+            100% { transform: translateY(0) scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        .animate-capsule-drop {
+            animation: capsule-drop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .stage-spotlight-active {
+            background: radial-gradient(circle at center 40%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 23, 42, 0) 70%);
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .gacha-globe-glass {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(186, 230, 253, 0.20));
+            backdrop-filter: blur(1px);
+            border: 4px solid #0f172a;
+            box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.75), inset 0 0 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .gacha-border {
+            border: 4px solid #0f172a;
+        }
+
+        .theme-blue-bg { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .theme-blue-dark { background-color: #1e40af; }
+
+        .theme-purple-bg { background: linear-gradient(135deg, #a855f7, #7e22ce); box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        .theme-purple-dark { background-color: #581c87; }
+        
+        .theme-emerald-bg { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .theme-emerald-dark { background-color: #065f46; }
+        
+        .theme-amber-bg { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+        .theme-amber-dark { background-color: #b45309; }
+        
+        .theme-red-bg { background: linear-gradient(135deg, #ef4444, #991b1b); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .theme-red-dark { background-color: #7f1d1d; }
+        
+        .theme-cyan-bg { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+        .theme-cyan-dark { background-color: #0e7490; }
+
+        .theme-rgb-rgb { background: linear-gradient(135deg, #ef4444, #10b981, #3b82f6); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); animation: rgb-glow 4s ease infinite; }
+        .theme-rgb-dark { background-color: #0f172a; }
+
+        @keyframes rgb-glow {
+            0% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 border border-indigo-400/30 flex items-center justify-center shadow-lg shadow-indigo-600/20">
+                    <i class="fa-solid fa-graduation-cap text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-100 tracking-wide font-sans">
+                        machineGASHAPON
+                    </h1>
+                    <p class="text-xs text-indigo-300 font-medium">Mesin Gacha Tanpa Batas</p>
+                </div>
+            </div>
+
+            <!-- Controls Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+                <button id="bgmToggleBtn" onclick="toggleBGM()" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-2 text-xs font-semibold">
+                    <i id="bgmIcon" class="fa-solid fa-music text-indigo-400 animate-pulse"></i>
+                    <span id="bgmStatusText" class="hidden sm:inline">BGM: ON</span>
+                </button>
+                
+                <div class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700 rounded-xl px-2.5 py-1.5">
+                    <i class="fa-solid fa-microphone text-indigo-400 text-xs"></i>
+                    <select id="voiceModeSelect" onchange="changeVoiceMode(this.value)" class="bg-transparent text-xs text-slate-200 font-semibold focus:outline-none cursor-pointer">
+                        <option value="male" class="bg-slate-900 text-slate-200" selected>Mode: Laki-Laki</option>
+                        <option value="female" class="bg-slate-900 text-slate-200">Mode: Perempuan</option>
+                        <option value="jokowi" class="bg-slate-900 text-slate-200">Mode: Pak Jokowi</option>
+                        <option value="prabowo" class="bg-slate-900 text-slate-200">Mode: Pak Prabowo</option>
+                    </select>
+                </div>
+
+                <button id="ttsToggleBtn" onclick="toggleTTS()" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-2 text-xs font-semibold">
+                    <i id="ttsIcon" class="fa-solid fa-bullhorn text-indigo-400"></i>
+                    <span id="ttsStatusText" class="hidden sm:inline">Suara: ON</span>
+                </button>
+
+                <button id="headerStageToggleBtn" onclick="toggleStageMode()" class="px-3 py-1.5 rounded-xl border border-indigo-500/40 bg-indigo-600/30 text-indigo-200 hover:bg-indigo-600 hover:text-white transition flex items-center gap-2 text-xs font-semibold shadow-sm">
+                    <i class="fa-solid fa-expand"></i>
+                    <span class="hidden sm:inline">Layar Penuh</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stage Mode Control Overlay -->
+    <div id="stageControlOverlay" class="fixed top-4 left-0 right-0 z-50 px-6 flex flex-wrap justify-between items-center gap-4 pointer-events-none hidden">
+        <div class="pointer-events-auto bg-slate-900/90 border border-indigo-500/40 backdrop-blur-md px-4 py-2 rounded-2xl shadow-2xl flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="text-xs font-bold text-indigo-300 uppercase tracking-widest font-game">PANGGUNG UNDIAN UTAMA</span>
+        </div>
+        <div class="pointer-events-auto flex flex-wrap items-center gap-4">
+            <button onclick="spinGashapon()" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs rounded-2xl border-2 border-slate-900 shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> PUTAR GACHA
+            </button>
+            <button id="exitStageBtn" onclick="toggleStageMode()" class="px-4 py-2 bg-indigo-600/90 hover:bg-indigo-500 text-white font-bold text-xs rounded-2xl border-2 border-indigo-400 shadow-2xl backdrop-blur-md transition transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-compress"></i>
+                <span>Keluar Layar Penuh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <main id="mainLayout" class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-8 items-start transition-all duration-500">
+        
+        <!-- Left Sidebar Controls -->
+        <section id="sidebarPanel" class="lg:col-span-4 space-y-6 order-2 lg:order-1 transition-all duration-300">
+            
+            <!-- Participants Card -->
+            <div class="glass-panel p-5 rounded-2xl shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-indigo-400"></i>
+                        Daftar Peserta
+                    </h2>
+                    <span id="participantCount" class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                        0 Peserta
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-400 mb-2">Masukkan nama (1 nama per baris) atau scan dari gambar/screenshot:</p>
+                
+                <textarea id="nameInput" rows="5" 
+                    class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition resize-none"
+                    placeholder="Dr. Hendra Wijaya&#10;Prof. Anisa Fitri&#10;Budi Santoso (Mhs)&#10;Siti Rahmawati&#10;Rudi Hermawan"></textarea>
+                
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button onclick="updateParticipantsList()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm transition shadow-md active:scale-[0.98]">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Perbarui
+                    </button>
+                    <!-- OCR Screenshot / JPG Import Button -->
+                    <label class="px-3 py-2 bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white rounded-xl text-sm transition border border-purple-500/40 cursor-pointer flex items-center justify-center gap-1.5" title="Scan nama dari Screenshot/JPG (AI OCR)">
+                        <i class="fa-solid fa-camera"></i>
+                        <span class="text-xs font-bold">Scan Gambar</span>
+                        <input type="file" id="ocrImageInput" accept="image/png,image/jpeg,image/jpg" onchange="extractNamesFromImage(event)" class="hidden">
+                    </label>
+                    <label class="px-3 py-2 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-xl text-sm transition border border-emerald-500/40 cursor-pointer flex items-center justify-center" title="Impor dari File TXT/CSV">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        <input type="file" id="importFile" accept=".txt,.csv" onchange="importDataFromFile(event)" class="hidden">
+                    </label>
+                    <button onclick="clearParticipants()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition border border-slate-700" title="Kosongkan">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Spin Settings Card -->
+            <div class="glass-panel p-5 rounded-2xl shadow-xl space-y-4">
+                <h2 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-400"></i>
+                    Pengaturan Undian
+                </h2>
+
+                <!-- Multi-Machine Selector -->
+                <div class="space-y-1.5 pb-2 border-b border-slate-800/80">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-semibold text-slate-300">Jumlah Mesin:</label>
+                        <span id="machineCountValDisplay" class="text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded border border-sky-500/20">
+                            Mesin #1
+                        </span>
+                    </div>
+                    <div class="flex gap-1.5 pt-1">
+                        <button onclick="setMachineCount(1)" class="machine-count-btn flex-1 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow" data-count="1">Mesin #1</button>
+                        <button onclick="setMachineCount(2)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="2">Mesin #2</button>
+                        <button onclick="setMachineCount(3)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="3">Mesin #3</button>
+                        <button onclick="setMachineCount(4)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="4">Mesin #4</button>
+                    </div>
+                </div>
+
+                <!-- Color Customizer -->
+                <div id="colorCustomizerPanel" class="space-y-2 pb-2 border-b border-slate-800/80">
+                    <label class="text-xs font-semibold text-slate-300 block">Warna Tema Mesin:</label>
+                    <div id="machineColorPickerGrid" class="grid grid-cols-1 gap-2"></div>
+                </div>
+
+                <!-- Auto Remove Switch -->
+                <div class="flex justify-between items-center pt-1 pb-2 border-b border-slate-800/80">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-semibold text-slate-300">Hapus Nama Terpilih:</span>
+                        <span id="autoRemoveStatusText" class="text-[10px] text-indigo-400 font-medium">Otomatis terhapus setelah terpilih</span>
+                    </div>
+                    <button id="autoRemoveToggleBtn" onclick="toggleAutoRemove()" class="px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1.5 text-xs font-bold shadow-sm">
+                        <i id="autoRemoveIcon" class="fa-solid fa-toggle-on text-emerald-400"></i>
+                        <span id="autoRemoveLabel">Aktif</span>
+                    </button>
+                </div>
+
+                <!-- Multi-Pull Count -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <label for="pullCountInput" class="text-xs font-semibold text-slate-300">Jumlah Pemenang per Spin:</label>
+                        <span id="pullCountValDisplay" class="text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2.5 py-0.5 rounded border border-indigo-500/20">
+                            1 Pemenang
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 pt-1">
+                        <div class="relative flex-1">
+                            <input type="number" id="pullCountInput" min="1" value="1" 
+                                oninput="onCustomPullCountChange(this.value)" 
+                                onblur="onPullCountBlur(this)"
+                                class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 text-sm font-bold text-indigo-300 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+                                placeholder="Ketik jumlah...">
+                        </div>
+                        
+                        <div class="flex gap-1">
+                            <button onclick="setPullCount(1)" class="pull-btn px-2.5 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow" data-count="1">1</button>
+                            <button onclick="setPullCount(5)" class="pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="5">5</button>
+                            <button onclick="setPullCount(10)" class="pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="10">10</button>
+                            <button onclick="setPullCountAll()" class="px-2.5 py-1.5 bg-slate-800 text-amber-400 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" title="Pilih Semua Peserta Tersisa">Semua</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spin Duration Slider -->
+                <div class="space-y-1.5 pt-2 border-t border-slate-800/80">
+                    <div class="flex justify-between items-center">
+                        <label for="durationRange" class="text-xs font-medium text-slate-300">Durasi Pengocokan:</label>
+                        <span id="durationValDisplay" class="text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">3 Detik</span>
+                    </div>
+                    <input type="range" id="durationRange" min="1" max="10" value="3" step="1" 
+                        oninput="onDurationChange(this.value)"
+                        class="w-full accent-indigo-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- Open Duration Slider -->
+                <div class="space-y-1.5 pt-2 border-t border-slate-800/80">
+                    <div class="flex justify-between items-center">
+                        <label for="openDurationRange" class="text-xs font-medium text-slate-300">Durasi Membuka Kapsul:</label>
+                        <span id="openDurationValDisplay" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">2 Detik</span>
+                    </div>
+                    <input type="range" id="openDurationRange" min="1" max="10" value="2" step="1" 
+                        oninput="onOpenDurationChange(this.value)"
+                        class="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- Reset Settingan Button -->
+                <div class="pt-3 border-t border-slate-800/80">
+                    <button onclick="factoryReset()" class="w-full py-2 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-semibold rounded-xl text-xs transition border border-rose-500/40 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Reset Settingan (Atur Ulang Semua)
+                    </button>
+                </div>
+            </div>
+
+            <!-- History Panel Card -->
+            <div class="glass-panel p-5 rounded-2xl shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        Riwayat Terpilih
+                    </h2>
+                    <div class="flex items-center gap-1">
+                        <button onclick="deleteSelectedHistory()" class="px-2 py-1 bg-rose-600/30 hover:bg-rose-600 text-xs text-rose-300 hover:text-white rounded border border-rose-500/40 transition" title="Hapus Riwayat Terpilih">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Hapus Pilihan
+                        </button>
+                        <button onclick="exportHistoryTxt()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700" title="Ekspor TXT">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </button>
+                        <button onclick="exportHistoryCsv()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700" title="Ekspor CSV">
+                            <i class="fa-solid fa-file-csv"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="historyList" class="max-h-48 overflow-y-auto space-y-2 pr-1">
+                    <p class="text-xs text-slate-500 text-center py-4 italic">Belum ada peserta terpilih.</p>
+                </div>
+            </div>
+
+            <!-- Complete Feature Info Box -->
+            <div class="glass-panel p-5 rounded-2xl shadow-xl space-y-3 border border-indigo-500/30">
+                <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center text-indigo-300 text-xs">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <h2 class="font-bold text-xs text-slate-100 uppercase tracking-wider font-game">Informasi Fitur Utama</h2>
+                </div>
+
+                <div class="space-y-2 text-[11px] text-slate-300">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                        <p><strong>Scan Gambar (AI OCR):</strong> Ekstrak daftar nama otomatis dari screenshot atau file JPG/PNG.</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                        <p><strong>Multi-Mesin & Kustomisasi:</strong> Jalankan hingga 4 mesin sekaligus dengan pilihan warna dinamis.</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                        <p><strong>Suara & TTS Pintar:</strong> Audio BGM, efek mekanis, dan pengumuman pemenang berbagai mode suara.</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                        <p><strong>Ekspor CSV/TXT:</strong> Simpan laporan riwayat undian dalam format rapi siap diunduh.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Side: Gashapon Visual Machines Grid -->
+        <section id="machineSection" class="lg:col-span-8 flex flex-col items-center justify-center order-1 lg:order-2 py-4 w-full">
+            <div id="machinesGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl items-center justify-items-center transition-all duration-500 mx-auto"></div>
+        </section>
+    </main>
+
+    <!-- Winner Announcement Modal -->
+    <div id="winnerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel border-2 border-indigo-500/40 p-6 rounded-3xl max-w-3xl w-full text-center shadow-2xl space-y-5 transform transition-all duration-300">
+            
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 border-2 border-indigo-400 text-white text-2xl shadow-lg mb-1 animate-bounce">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <h2 id="modalTitle" class="text-2xl font-game font-bold text-indigo-300">PESERTA TERPILIH PER MESIN</h2>
+
+            <div id="winnersDisplayGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 max-h-[60vh] overflow-y-auto p-1"></div>
+
+            <div class="space-y-2 mt-6">
+                <div id="manualModalButtons" class="space-y-2 hidden">
+                    <button onclick="removeWinnersAndClose()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-check"></i> Selesai (Hapus Terpilih dari Mesin)
+                    </button>
+                    <button onclick="keepWinnersAndClose()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-sm transition border border-slate-700 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Masukkan Kembali untuk Putaran Berikutnya
+                    </button>
+                </div>
+
+                <button id="autoModalCloseBtn" onclick="closeWinnerModalOnly()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> Tutup & Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- First-Time Tutorial / Guide Modal with Perfectly Paced Countdown -->
+    <div id="tutorialModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel border-2 border-indigo-500/50 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl space-y-6 transform transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-600 border border-indigo-400/30 flex items-center justify-center shadow-lg text-white text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-game font-bold text-slate-100">Selamat Datang di machineGASHAPON!</h2>
+                        <p class="text-xs text-indigo-300">Panduan Singkat Penggunaan Mesin Gacha</p>
+                    </div>
+                </div>
+                <!-- Countdown Badge -->
+                <div class="flex flex-col items-end">
+                    <span id="tutorialCountdownTimer" class="text-base font-game font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/30">12s</span>
+                    <span class="text-[9px] text-slate-400 mt-0.5">Auto-tutup</span>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-300">
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+                    <p><strong>Daftar Peserta:</strong> Masukkan nama peserta (1 nama per baris) atau gunakan tombol <em>Scan Gambar</em> untuk unggah screenshot/JPG daftar nama secara otomatis.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+                    <p><strong>Jumlah Mesin & Pemenang:</strong> Atur jumlah mesin (1-4 mesin) dan jumlah pemenang per spin sesuai kebutuhan acara Anda.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+                    <p><strong>Putar Gacha:</strong> Klik tombol <em>Putar Mesin</em>, tunggu pengocokan bola, dan saksikan kapsul pemenang keluar dengan meriah!</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">4</div>
+                    <p><strong>Ekspor Riwayat:</strong> Anda dapat menyimpan dan mengunduh hasil undian ke format TXT atau tabel CSV yang rapi.</p>
+                </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div id="tutorialProgressBar" class="bg-indigo-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+            </div>
+
+            <button onclick="closeTutorialModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rocket"></i> Mulai Gunakan Aplikasi
+            </button>
+        </div>
+    </div>
+
+    <!-- Complete Feature Info Modal -->
+    <div id="featureInfoModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel border-2 border-indigo-500/50 p-6 sm:p-8 rounded-3xl max-w-2xl w-full shadow-2xl space-y-6 transform transition-all duration-300 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center text-indigo-300">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-game font-bold text-slate-100">Informasi & Fitur machineGASHAPON</h2>
+                        <p class="text-xs text-indigo-300">Panduan lengkap semua fitur canggih</p>
+                    </div>
+                </div>
+                <button onclick="toggleFeatureInfoModal(false)" class="text-slate-400 hover:text-white text-lg px-2 py-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-300">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-1">
+                        <h3 class="font-bold text-indigo-300 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-xs"></i> 1. Manajemen Peserta
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Masukkan nama manual (1 per baris), impor file TXT/CSV, atau gunakan fitur <strong>Scan Gambar (AI OCR)</strong> untuk mengekstrak nama peserta langsung dari screenshot atau foto JPG.</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-1">
+                        <h3 class="font-bold text-indigo-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-xs"></i> 2. Multi-Mesin & Kustomisasi
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Mendukung hingga 4 mesin gacha aktif secara bersamaan, kustomisasi warna tema per mesin, serta pengaturan jumlah pemenang dan durasi pengocokan bola.</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-1">
+                        <h3 class="font-bold text-indigo-300 flex items-center gap-2">
+                            <i class="fa-solid fa-volume-high text-xs"></i> 3. Audio, TTS & BGM
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Musik latar (BGM) interaktif, efek suara mekanis gacha, serta suara pengumuman pemenang (Text-to-Speech) dengan pilihan gaya suara (Laki-laki, Perempuan, Pak Jokowi, & Pak Prabowo).</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-1">
+                        <h3 class="font-bold text-indigo-300 flex items-center gap-2">
+                            <i class="fa-solid fa-file-csv text-xs"></i> 4. Riwayat & Ekspor Tabular
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Penyimpanan riwayat sesi terurut lengkap, fitur hapus pilihan, dan ekspor data terstruktur ke format TXT maupun tabel CSV profesional siap buka di Excel/Google Sheets.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 text-center">
+                <button onclick="toggleFeatureInfoModal(false)" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow">
+                    Tutup Informasi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Credit Footer -->
+    <footer class="w-full py-4 px-4 text-center border-t border-slate-900/80 bg-slate-950/40 text-[10px] text-slate-500 flex flex-col sm:flex-row items-center justify-center gap-2 select-none">
+        <span>machineGASHAPON © 2026</span>
+        <span class="hidden sm:inline">•</span>
+        <span class="opacity-70 hover:opacity-100 transition cursor-pointer" onclick="toggleFeatureInfoModal(true)" title="Informasi & Pengembang">
+            Dev: Ibnu Yuliarto (05SKMM002)
+        </span>
+    </footer>
+
+    <!-- Toast Notification Popup -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="glass-panel border border-indigo-500/40 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+            <i id="toastIcon" class="fa-solid fa-circle-info text-indigo-400"></i>
+            <span id="toastMsg" class="text-xs font-semibold text-slate-200">Notifikasi</span>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        let participants = [];
+        let history = [];
+        let isSpinning = false;
+        let isSoundEnabled = true;
+        let isBgmEnabled = true;
+        let isAutoRemoveEnabled = true; 
+        let spinDuration = 3; 
+        let openDuration = 2; 
+        let autoOpenTimer = null;
+        let pullCount = 1; 
+        let currentWinnersByMachine = {}; 
+        let activeVoiceMode = 'male';
+        let tutorialInterval = null;
+
+        let activeMachineCount = 1;
+        let machineColors = ['blue', 'purple', 'emerald', 'amber'];
+        let sessionCounter = 0;
+
+        const colorPresets = [
+            { id: 'blue', name: 'Electric Blue', bg: 'theme-blue-bg', dark: 'theme-blue-dark' },
+            { id: 'purple', name: 'Neon Purple', bg: 'theme-purple-bg', dark: 'theme-purple-dark' },
+            { id: 'emerald', name: 'Matrix Emerald', bg: 'theme-emerald-bg', dark: 'theme-emerald-dark' },
+            { id: 'amber', name: 'Cyber Amber', bg: 'theme-amber-bg', dark: 'theme-amber-dark' },
+            { id: 'red', name: 'Vibrant Red', bg: 'theme-red-bg', dark: 'theme-red-dark' },
+            { id: 'cyan', name: 'Laser Cyan', bg: 'theme-cyan-bg', dark: 'theme-cyan-dark' },
+            { id: 'rgb', name: 'RGB Dynamic Gamer', bg: 'theme-rgb-rgb', dark: 'theme-rgb-dark' }
+        ];
+
+        const ballColors = [
+            'from-indigo-400 to-purple-600',
+            'from-sky-400 to-blue-600',
+            'from-emerald-300 to-teal-500',
+            'from-amber-300 to-orange-400',
+            'from-red-400 to-rose-600',
+            'from-cyan-300 to-blue-500',
+            'from-yellow-200 to-amber-400',
+            'from-slate-300 to-slate-500'
+        ];
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let bgmTimer = null;
+
+        const jokowiMotivationalQuotes = [
+            "Kerja, kerja, kerja! Hasil tidak akan pernah mengkhianati usaha.",
+            "Kita harus selalu optimis dan pantang menyerah menghadapi segala tantangan.",
+            "Jangan pernah takut gagal, teruslah maju dan berkarya untuk bangsa.",
+            "Kerja keras dan kerja cerdas adalah kunci menuju kemajuan bersama."
+        ];
+
+        const prabowoMotivationalQuotes = [
+            "Saudara-saudara sekalian! Berdiri tegak, jaga persatuan dan berjuangan demi cita-cita!",
+            "Jangan pernah menyerah! Kehormatan dan semangat pantang mundur adalah jiwa kita!",
+            "Bangsa yang besar adalah bangsa yang berani dan mandiri!"
+        ];
+
+        function changeVoiceMode(mode) {
+            activeVoiceMode = mode;
+            let modeName = "Pak Jokowi";
+            if (mode === 'prabowo') modeName = "Pak Prabowo";
+            if (mode === 'female') modeName = "Perempuan";
+            if (mode === 'male') modeName = "Laki-Laki";
+            showToast(`Mode Suara diubah ke: ${modeName}`);
+        }
+
+        function toggleBGM() {
+            isBgmEnabled = !isBgmEnabled;
+            const icon = document.getElementById('bgmIcon');
+            const text = document.getElementById('bgmStatusText');
+
+            if (isBgmEnabled) {
+                icon.className = "fa-solid fa-music text-indigo-400 animate-pulse";
+                text.innerText = "BGM: ON";
+                startBGM();
+                showToast("Musik Latar (BGM) diaktifkan");
+            } else {
+                icon.className = "fa-solid fa-music text-slate-400";
+                text.innerText = "BGM: OFF";
+                stopBGM();
+                showToast("Musik Latar (BGM) dimatikan");
+            }
+        }
+
+        function startBGM() {
+            if (!isBgmEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            stopBGM();
+
+            const melody = [261.63, 329.63, 392.00, 329.63, 293.66, 349.23, 440.00, 349.23];
+            let noteIdx = 0;
+
+            bgmTimer = setInterval(() => {
+                if (!isBgmEnabled) return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(melody[noteIdx % melody.length], audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                    noteIdx++;
+                } catch (e) {
+                    console.log("BGM Error", e);
+                }
+            }, 400);
+        }
+
+        function stopBGM() {
+            if (bgmTimer) {
+                clearInterval(bgmTimer);
+                bgmTimer = null;
+            }
+        }
+
+        function playSoundEffect(type) {
+            if (!isSoundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                if (type === 'crank') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                } 
+                else if (type === 'shuffle') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(260 + Math.random() * 260, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                }
+                else if (type === 'drop') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                }
+                else if (type === 'fanfare') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+                        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.3);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(audioCtx.currentTime + idx * 0.08);
+                        osc.stop(audioCtx.currentTime + idx * 0.08 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio FX Error", e);
+            }
+        }
+
+        function speakTextJokowi(currentWinnersList) {
+            if (!isSoundEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+
+                let speechSentence = "";
+                const voices = window.speechSynthesis.getVoices();
+                let selectedVoice = null;
+                let pitchVal = 1.0;
+                let rateVal = 1.0;
+
+                if (activeVoiceMode === 'jokowi') {
+                    const randomQuote = jokowiMotivationalQuotes[Math.floor(Math.random() * jokowiMotivationalQuotes.length)];
+                    if (currentWinnersList.length === 1) {
+                        speechSentence = `Ya... selamat kepada peserta terpilih... ${currentWinnersList[0]}... ${randomQuote}`;
+                    } else {
+                        speechSentence = `Ya... selamat kepada para peserta terpilih... yaitu ${currentWinnersList.join(', ')}... ${randomQuote}`;
+                    }
+                    pitchVal = 0.70;
+                    rateVal = 0.78;
+                    selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
+                } 
+                else if (activeVoiceMode === 'prabowo') {
+                    const randomQuote = prabowoMotivationalQuotes[Math.floor(Math.random() * prabowoMotivationalQuotes.length)];
+                    if (currentWinnersList.length === 1) {
+                        speechSentence = `Saudara-saudara sekalian! Selamat kepada peserta terpilih... ${currentWinnersList[0]}! ${randomQuote}`;
+                    } else {
+                        speechSentence = `Saudara-saudara sekalian! Selamat kepada para peserta terpilih yaitu ${currentWinnersList.join(', dan ')}! ${randomQuote}`;
+                    }
+                    pitchVal = 0.85;
+                    rateVal = 0.92;
+                    selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
+                } 
+                else if (activeVoiceMode === 'female') {
+                    speechSentence = `${currentWinnersList.join(', ')}`;
+                    pitchVal = 1.0; 
+                    rateVal = 0.90; 
+                    selectedVoice = voices.find(v => v.lang.includes('id') && (
+                        v.name.toLowerCase().includes('gadis') || 
+                        v.name.toLowerCase().includes('indira') || 
+                        v.name.toLowerCase().includes('aris') || 
+                        v.name.toLowerCase().includes('female') ||
+                        v.name.toLowerCase().includes('google')
+                    )) || voices.find(v => v.lang.includes('id') && !v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
+                } 
+                else if (activeVoiceMode === 'male') {
+                    speechSentence = `${currentWinnersList.join(', ')}`;
+                    pitchVal = 0.95;
+                    rateVal = 0.90; 
+                    selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
+                }
+
+                const utterance = new SpeechSynthesisUtterance(speechSentence);
+                utterance.lang = 'id-ID';
+                utterance.rate = rateVal;
+                utterance.pitch = pitchVal;
+                utterance.volume = 1.0;
+
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function toggleTTS() {
+            isSoundEnabled = !isSoundEnabled;
+            const icon = document.getElementById('ttsIcon');
+            const text = document.getElementById('ttsStatusText');
+
+            if (isSoundEnabled) {
+                icon.className = "fa-solid fa-bullhorn text-indigo-400";
+                text.innerText = "Suara: ON";
+                showToast("Pengumuman suara diaktifkan");
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-slate-500";
+                text.innerText = "Suara: OFF";
+                showToast("Suara dimatikan");
+            }
+        }
+
+        function toggleAutoRemove() {
+            isAutoRemoveEnabled = !isAutoRemoveEnabled;
+            const icon = document.getElementById('autoRemoveIcon');
+            const label = document.getElementById('autoRemoveLabel');
+            const statusText = document.getElementById('autoRemoveStatusText');
+            const btn = document.getElementById('autoRemoveToggleBtn');
+
+            if (isAutoRemoveEnabled) {
+                icon.className = "fa-solid fa-toggle-on text-emerald-400";
+                label.innerText = "Aktif";
+                statusText.innerText = "Otomatis terhapus setelah terpilih";
+                btn.className = "px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1.5 text-xs font-bold shadow-sm";
+                showToast("Fitur Hapus Otomatis Nama Terpilih: AKTIF");
+            } else {
+                icon.className = "fa-solid fa-toggle-off text-slate-400";
+                label.innerText = "Non-Aktif";
+                statusText.innerText = "Nama tetap ada di mesin";
+                btn.className = "px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1.5 text-xs font-bold shadow-sm";
+                showToast("Fitur Hapus Otomatis Nama Terpilih: NON-AKTIF");
+            }
+        }
+
+        function importDataFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                if (lines.length > 0) {
+                    const currentVal = document.getElementById('nameInput').value;
+                    const newVal = currentVal ? currentVal + "\n" + lines.join("\n") : lines.join("\n");
+                    document.getElementById('nameInput').value = newVal;
+                    updateParticipantsList();
+                    showToast(`Berhasil mengimpor ${lines.length} peserta dari file!`);
+                } else {
+                    showToast("File kosong atau format tidak valid!", "error");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = "";
+        }
+
+        async function extractNamesFromImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            showToast("Membaca dan mengekstrak nama dari gambar (AI OCR)...");
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64String = e.target.result.split(',')[1];
+                    const mimeType = file.type || 'image/jpeg';
+
+                    const systemPrompt = "Extract all person names or participant names visible in this image. Return ONLY the names, one name per line, without any numbering, bullet points, or extra conversational text.";
+                    const userPrompt = "Tolong ekstrak daftar nama peserta dari gambar ini. Berikan hasilnya satu nama per baris.";
+
+                    const payload = {
+                        contents: [
+                            {
+                                role: "user",
+                                parts: [
+                                    { text: userPrompt },
+                                    {
+                                        inlineData: {
+                                            mimeType: mimeType,
+                                            data: base64String
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        systemInstruction: {
+                            parts: [{ text: systemPrompt }]
+                        }
+                    };
+
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                    let response = null;
+                    let retries = 3;
+                    let delay = 1000;
+
+                    for (let i = 0; i < retries; i++) {
+                        try {
+                            response = await fetch(apiUrl, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
+                            });
+                            if (response.ok) break;
+                        } catch (err) {
+                            if (i === retries - 1) throw err;
+                            await new Promise(res => setTimeout(res, delay));
+                            delay *= 2;
+                        }
+                    }
+
+                    if (!response || !response.ok) {
+                        throw new Error("Gagal menghubungi layanan OCR Gemini API.");
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const extractedText = candidate.content.parts[0].text;
+                        const extractedNames = extractedText.split(/\r?\n/).map(n => n.trim()).filter(n => n.length > 0);
+
+                        if (extractedNames.length > 0) {
+                            const currentVal = document.getElementById('nameInput').value;
+                            const newVal = currentVal ? currentVal + "\n" + extractedNames.join("\n") : extractedNames.join("\n");
+                            document.getElementById('nameInput').value = newVal;
+                            updateParticipantsList();
+                            showToast(`Berhasil mengekstrak ${extractedNames.length} nama dari gambar!`);
+                        } else {
+                            showToast("Tidak ditemukan nama dalam gambar.", "error");
+                        }
+                    } else {
+                        showToast("Gagal mendeteksi teks pada gambar.", "error");
+                    }
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                console.error("OCR Error:", err);
+                showToast("Terjadi kesalahan saat memproses gambar.", "error");
+            } finally {
+                event.target.value = "";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const defaultNames = ["Dr. Hendra Wijaya", "Prof. Anisa Fitri", "Budi Santoso (Mhs)", "Siti Rahmawati", "Rudi Hermawan", "Dewi Lestari", "Ahmad Fauzi", "Eka Putri"];
+            document.getElementById('nameInput').value = defaultNames.join('\n');
+            
+            setMachineCount(1);
+            updateParticipantsList();
+            startBGM();
+
+            const hasSeenTutorial = localStorage.getItem('machineGashapon_seenTutorial');
+            if (!hasSeenTutorial) {
+                const tutorialModal = document.getElementById('tutorialModal');
+                if (tutorialModal) {
+                    tutorialModal.classList.remove('hidden');
+                    startTutorialCountdown();
+                }
+            }
+
+            document.body.addEventListener('click', () => {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }, { once: true });
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.getVoices();
+                };
+            }
+        });
+
+        function startTutorialCountdown() {
+            let timeLeft = 12; // Disesuaikan agar pas (tidak terlalu cepat & tidak terlalu lama)
+            const totalTime = 12;
+            const timerEl = document.getElementById('tutorialCountdownTimer');
+            const barEl = document.getElementById('tutorialProgressBar');
+
+            if (tutorialInterval) clearInterval(tutorialInterval);
+
+            if (barEl) {
+                barEl.style.transition = 'width 1s linear';
+                barEl.style.width = '100%';
+            }
+
+            tutorialInterval = setInterval(() => {
+                timeLeft--;
+                if (timerEl) timerEl.innerText = `${timeLeft}s`;
+                if (barEl) {
+                    let percent = (timeLeft / totalTime) * 100;
+                    barEl.style.width = `${percent}%`;
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(tutorialInterval);
+                    closeTutorialModal();
+                }
+            }, 1000);
+        }
+
+        function closeTutorialModal() {
+            if (tutorialInterval) {
+                clearInterval(tutorialInterval);
+                tutorialInterval = null;
+            }
+            localStorage.setItem('machineGashapon_seenTutorial', 'true');
+            const tutorialModal = document.getElementById('tutorialModal');
+            if (tutorialModal) tutorialModal.classList.add('hidden');
+            showToast("Panduan selesai. Selamat mengundi!");
+        }
+
+        function toggleFeatureInfoModal(show) {
+            const modal = document.getElementById('featureInfoModal');
+            if (!modal) return;
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function setMachineCount(count) {
+            activeMachineCount = count;
+            document.getElementById('machineCountValDisplay').innerText = `Mesin #${count}`;
+
+            document.querySelectorAll('.machine-count-btn').forEach(btn => {
+                if (parseInt(btn.dataset.count, 10) === count) {
+                    btn.className = "machine-count-btn flex-1 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow";
+                } else {
+                    btn.className = "machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700";
+                }
+            });
+
+            renderMachines();
+            renderColorCustomizerPanel();
+            showToast(`Jumlah Mesin diubah ke: Mesin #${count}`);
+        }
+
+        function changeMachineColor(machineIndex, colorId) {
+            machineColors[machineIndex] = colorId;
+            renderMachines();
+            renderColorCustomizerPanel();
+            showToast(`Warna Mesin #${machineIndex + 1} diubah!`);
+        }
+
+        function renderColorCustomizerPanel() {
+            const panel = document.getElementById('machineColorPickerGrid');
+            if (!panel) return;
+            panel.innerHTML = "";
+
+            for (let i = 0; i < activeMachineCount; i++) {
+                const currentColor = machineColors[i];
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-slate-800";
+                
+                let optionsHtml = colorPresets.map(p => `
+                    <button onclick="changeMachineColor(${i}, '${p.id}')" class="w-5 h-5 rounded-full ${p.bg} border-2 ${currentColor === p.id ? 'border-white scale-110 shadow-md' : 'border-slate-900 opacity-60 hover:opacity-100'} transition" title="${p.name}"></button>
+                `).join('');
+
+                row.innerHTML = `
+                    <span class="text-xs font-semibold text-slate-300">Mesin #${i + 1}:</span>
+                    <div class="flex items-center gap-1.5">${optionsHtml}</div>
+                `;
+                panel.appendChild(row);
+            }
+        }
+
+        function renderMachines() {
+            const gridContainer = document.getElementById('machinesGridContainer');
+            if (!gridContainer) return;
+
+            if (activeMachineCount === 1) {
+                gridContainer.className = "grid grid-cols-1 gap-6 w-full max-w-sm sm:max-w-md items-center justify-items-center transition-all duration-500 mx-auto";
+            } else if (activeMachineCount === 2) {
+                gridContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl items-center justify-items-center transition-all duration-500 mx-auto";
+            } else {
+                gridContainer.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 w-full max-w-4xl items-center justify-items-center transition-all duration-500 mx-auto";
+            }
+
+            gridContainer.innerHTML = "";
+
+            for (let i = 0; i < activeMachineCount; i++) {
+                const colorPreset = colorPresets.find(p => p.id === machineColors[i]) || colorPresets[0];
+                const machineEl = document.createElement('div');
+                machineEl.className = "relative w-full max-w-xs flex flex-col items-center select-none transition-all duration-300 bg-slate-900/40 p-4 rounded-3xl border border-slate-800/80 shadow-xl";
+                machineEl.id = `machineContainer_${i}`;
+
+                machineEl.innerHTML = `
+                    <div class="w-52 sm:w-60 h-8 ${colorPreset.bg} gacha-border rounded-t-3xl relative flex items-center justify-center shadow-lg z-20">
+                        <div class="absolute -top-3 w-14 h-3 bg-gradient-to-r from-slate-300 via-slate-100 to-slate-400 gacha-border rounded-t-md"></div>
+                        <div class="w-36 h-1 bg-white/40 rounded-full mb-1"></div>
+                    </div>
+
+                    <div class="relative w-52 sm:w-60 h-44 sm:h-52 gacha-globe-glass rounded-b-xl flex items-center justify-center overflow-hidden z-10" id="gachaGlobe_${i}">
+                        <div class="absolute top-2 left-3 w-10 h-20 bg-gradient-to-b from-white/70 via-white/20 to-transparent rounded-full transform -rotate-45 blur-[0.5px] pointer-events-none z-20"></div>
+
+                        <div id="shuffleDisplay_${i}" class="absolute z-30 inset-x-4 top-1/2 -translate-y-1/2 text-center bg-slate-900/90 py-2 px-2.5 rounded-xl border border-indigo-400/50 shadow-xl hidden">
+                            <div class="text-[10px] text-indigo-400 font-game font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-spin fa-compact-disc text-indigo-400 text-xs"></i>
+                                <span id="shuffleCountdownText_${i}">Mengocok...</span>
+                            </div>
+                        </div>
+
+                        <div id="ballsContainer_${i}" class="w-full h-full relative p-2.5 flex flex-wrap items-center justify-center content-end gap-1"></div>
+                    </div>
+
+                    <div class="w-60 sm:w-68 ${colorPreset.bg} gacha-border rounded-b-3xl pt-3 pb-4 px-4 relative z-0 shadow-2xl flex flex-col items-center">
+                        <div class="w-full bg-slate-900/40 border-2 border-slate-900/30 rounded-2xl p-2.5 flex flex-col items-center gap-2 relative">
+                            <div class="w-full flex justify-between items-center px-1">
+                                <div class="w-12 h-6 bg-white gacha-border rounded-md flex items-center justify-center">
+                                    <span class="text-[9px] font-bold text-slate-800">MESIN #${i + 1}</span>
+                                </div>
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-b from-slate-300 via-slate-100 to-slate-400 border-2 border-slate-900 flex items-center justify-center shadow-sm">
+                                    <div class="w-1 h-3 bg-slate-900 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="relative flex items-center justify-center my-0.5">
+                                <div class="absolute w-20 h-20 pointer-events-none border-t-4 border-r-4 border-white rounded-full transform rotate-45 opacity-80"></div>
+                                <button id="spinBtn_${i}" onclick="spinGashapon()" 
+                                    class="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 gacha-border flex items-center justify-center shadow-lg active:scale-95 transition transform group">
+                                    <div id="crankKnob_${i}" class="w-12 h-4 bg-slate-400 border-2 border-slate-900 rounded-md flex items-center justify-center shadow-md transition-transform duration-700">
+                                        <div class="w-8 h-1 bg-slate-800 rounded-full"></div>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <button onclick="spinGashapon()" id="spinBtnLabel_${i}" class="w-full py-1 bg-slate-900 hover:bg-slate-800 text-cyan-300 font-game text-[11px] rounded-xl transition border border-slate-700 shadow flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-play text-[9px]"></i> ▶ PUTAR MESIN
+                            </button>
+                        </div>
+
+                        <div class="w-full flex justify-between items-end mt-2.5 px-1">
+                            <div class="w-22 h-20 bg-slate-950 border-4 border-slate-900 rounded-t-full relative flex items-center justify-center p-1.5 overflow-hidden shadow-inner">
+                                <div class="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900 pointer-events-none"></div>
+                                <div id="outputCapsulesContainer_${i}" class="relative z-10 flex items-center justify-center gap-1 flex-wrap max-w-full">
+                                    <p class="text-[9px] text-slate-500 italic font-medium text-center">Tray</p>
+                                </div>
+                            </div>
+                            <div class="w-8 h-7 ${colorPreset.dark} border-2 border-slate-900/40 rounded-lg"></div>
+                        </div>
+
+                        <div class="w-[110%] h-4 ${colorPreset.bg} gacha-border rounded-b-2xl -mb-7 mt-2 shadow-xl"></div>
+                    </div>
+                `;
+
+                gridContainer.appendChild(machineEl);
+            }
+
+            renderBalls();
+        }
+
+        function setPullCount(count) {
+            let val = parseInt(count, 10);
+            if (isNaN(val) || val < 1) val = 1;
+
+            pullCount = val;
+            document.getElementById('pullCountInput').value = pullCount;
+            document.getElementById('pullCountValDisplay').innerText = `${pullCount} Pemenang`;
+            
+            document.querySelectorAll('.pull-btn').forEach(btn => {
+                if (parseInt(btn.dataset.count, 10) === val) {
+                    btn.className = "pull-btn px-2.5 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow";
+                } else {
+                    btn.className = "pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700";
+                }
+            });
+        }
+
+        function onCustomPullCountChange(val) {
+            if (val === "" || val === null) {
+                document.getElementById('pullCountValDisplay').innerText = `- Pemenang`;
+                return;
+            }
+
+            let parsed = parseInt(val, 10);
+            if (isNaN(parsed) || parsed < 1) {
+                parsed = 1;
+            }
+
+            pullCount = parsed;
+            document.getElementById('pullCountValDisplay').innerText = `${pullCount} Pemenang`;
+        }
+
+        function onPullCountBlur(inputElem) {
+            if (inputElem.value === "" || parseInt(inputElem.value, 10) < 1 || isNaN(parseInt(inputElem.value, 10))) {
+                setPullCount(1);
+            }
+        }
+
+        function setPullCountAll() {
+            if (participants.length === 0) {
+                showToast("Tidak ada peserta tersisa!", "error");
+                return;
+            }
+            setPullCount(participants.length);
+            showToast(`Target diatur ke semua ${participants.length} peserta tersisa.`);
+        }
+
+        function toggleStageMode() {
+            const sidebar = document.getElementById('sidebarPanel');
+            const mainLayout = document.getElementById('mainLayout');
+            const stageOverlay = document.getElementById('stageControlOverlay');
+            const machineSection = document.getElementById('machineSection');
+            const headerStageToggleBtn = document.getElementById('headerStageToggleBtn');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                stageOverlay.classList.add('hidden');
+                if (headerStageToggleBtn) headerStageToggleBtn.classList.remove('hidden');
+                mainLayout.classList.remove('stage-spotlight-active');
+                machineSection.classList.remove('lg:col-span-12');
+                machineSection.classList.add('lg:col-span-8');
+                showToast("Mode normal diaktifkan");
+            } else {
+                sidebar.classList.add('hidden');
+                stageOverlay.classList.remove('hidden');
+                if (headerStageToggleBtn) headerStageToggleBtn.classList.add('hidden');
+                mainLayout.classList.add('stage-spotlight-active');
+                machineSection.classList.remove('lg:col-span-8');
+                machineSection.classList.add('lg:col-span-12');
+                showToast("Mode Panggung Utama Aktif!");
+                playSoundEffect('fanfare');
+            }
+        }
+
+        function onDurationChange(val) {
+            spinDuration = parseInt(val, 10);
+            document.getElementById('durationValDisplay').innerText = `${spinDuration} Detik`;
+        }
+
+        function onOpenDurationChange(val) {
+            openDuration = parseInt(val, 10);
+            document.getElementById('openDurationValDisplay').innerText = `${openDuration} Detik`;
+        }
+
+        function factoryReset() {
+            if (confirm("Apakah Anda yakin ingin melakukan Reset Settingan? Semua peserta, riwayat, dan pengaturan akan dikembalikan ke kondisi awal.")) {
+                localStorage.removeItem('machineGashapon_seenTutorial');
+                participants = [];
+                history = [];
+                sessionCounter = 0;
+                activeMachineCount = 1;
+                machineColors = ['blue', 'purple', 'emerald', 'amber'];
+                pullCount = 1;
+                spinDuration = 3;
+                openDuration = 2;
+                isAutoRemoveEnabled = true;
+
+                document.getElementById('nameInput').value = "Dr. Hendra Wijaya\nProf. Anisa Fitri\nBudi Santoso (Mhs)\nSiti Rahmawati\nRudi Hermawan\nDewi Lestari\nAhmad Fauzi\nEka Putri";
+                
+                const durationRange = document.getElementById('durationRange');
+                if (durationRange) durationRange.value = 3;
+                
+                const openDurationRange = document.getElementById('openDurationRange');
+                if (openDurationRange) openDurationRange.value = 2;
+                
+                const pullCountInput = document.getElementById('pullCountInput');
+                if (pullCountInput) pullCountInput.value = 1;
+
+                const durationValDisplay = document.getElementById('durationValDisplay');
+                if (durationValDisplay) durationValDisplay.innerText = "3 Detik";
+
+                const openDurationValDisplay = document.getElementById('openDurationValDisplay');
+                if (openDurationValDisplay) openDurationValDisplay.innerText = "2 Detik";
+
+                setMachineCount(1);
+                setPullCount(1);
+                updateParticipantsList();
+                renderHistory();
+
+                showToast("Reset Settingan berhasil! Semua data dikembalikan ke awal.");
+            }
+        }
+
+        function clearParticipants() {
+            document.getElementById('nameInput').value = "";
+            updateParticipantsList();
+            showToast("Daftar peserta dikosongkan");
+        }
+
+        function renderBalls() {
+            for (let m = 0; m < activeMachineCount; m++) {
+                const container = document.getElementById(`ballsContainer_${m}`);
+                if (!container) continue;
+                container.innerHTML = "";
+
+                if (participants.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-[10px] text-slate-400/80 text-center px-2 font-semibold flex flex-col items-center gap-1">
+                            <i class="fa-solid fa-box-open text-base text-slate-500"></i>
+                            <span>Bola habis!</span>
+                        </div>`;
+                    continue;
+                }
+
+                const displayCount = Math.min(participants.length, 16);
+                for (let i = 0; i < displayCount; i++) {
+                    const colorClass = ballColors[i % ballColors.length];
+                    const ball = document.createElement('div');
+                    const animType = (i % 3) + 1;
+                    ball.dataset.anim = `bouncing-ball-${animType}`;
+                    ball.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr ${colorClass} shadow-md border-2 border-slate-900 flex items-center justify-center text-white/80 text-[10px] font-bold transition-all transform hover:scale-105 ball-item relative overflow-hidden`;
+                    
+                    ball.innerHTML = `<div class="absolute inset-x-0 top-1/2 h-[1px] bg-slate-900/40"></div>`;
+                    container.appendChild(ball);
+                }
+            }
+        }
+
+        function updateParticipantsList() {
+            const rawText = document.getElementById('nameInput').value;
+            participants = rawText.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+            
+            document.getElementById('participantCount').innerText = `${participants.length} Peserta`;
+            renderBalls();
+        }
+
+        function spinGashapon() {
+            if (isSpinning) return;
+
+            const totalRequestedPulls = pullCount * activeMachineCount;
+            if (participants.length < totalRequestedPulls) {
+                showToast(`Jumlah peserta tidak cukup (${participants.length}) untuk ${activeMachineCount} mesin x ${pullCount} pemenang!`, "error");
+                return;
+            }
+
+            isSpinning = true;
+
+            for (let m = 0; m < activeMachineCount; m++) {
+                const spinBtn = document.getElementById(`spinBtn_${m}`);
+                if (spinBtn) spinBtn.disabled = true;
+
+                const spinBtnLabel = document.getElementById(`spinBtnLabel_${m}`);
+                if (spinBtnLabel) spinBtnLabel.innerText = "▶ MENGOKOK...";
+
+                const capsulesTray = document.getElementById(`outputCapsulesContainer_${m}`);
+                if (capsulesTray) capsulesTray.innerHTML = "";
+
+                const crankKnob = document.getElementById(`crankKnob_${m}`);
+                if (crankKnob) crankKnob.style.transform = 'rotate(360deg)';
+
+                const machineContainer = document.getElementById(`machineContainer_${m}`);
+                if (machineContainer) machineContainer.classList.add('animate-shake');
+
+                const shuffleDisplay = document.getElementById(`shuffleDisplay_${m}`);
+                const countdownText = document.getElementById(`shuffleCountdownText_${m}`);
+                if (shuffleDisplay) shuffleDisplay.classList.remove('hidden');
+                if (countdownText) countdownText.innerText = `Mengocok... (${spinDuration}s)`;
+            }
+
+            const balls = document.querySelectorAll('.ball-item');
+            balls.forEach(b => {
+                const animClass = b.dataset.anim || 'bouncing-ball-1';
+                b.classList.add(animClass);
+            });
+            
+            playSoundEffect('crank');
+
+            let remainingTime = spinDuration;
+            const timerInterval = setInterval(() => {
+                remainingTime--;
+                if (remainingTime > 0) {
+                    for (let m = 0; m < activeMachineCount; m++) {
+                        const countdownText = document.getElementById(`shuffleCountdownText_${m}`);
+                        if (countdownText) countdownText.innerText = `Mengocok... (${remainingTime}s)`;
+                    }
+                }
+            }, 1000);
+
+            const soundInterval = setInterval(() => {
+                playSoundEffect('shuffle');
+            }, 85);
+
+            const tempParticipants = [...participants];
+            currentWinnersByMachine = {};
+            
+            for (let m = 0; m < activeMachineCount; m++) {
+                currentWinnersByMachine[m] = [];
+            }
+
+            for (let p = 0; p < pullCount; p++) {
+                for (let m = 0; m < activeMachineCount; m++) {
+                    if (tempParticipants.length > 0) {
+                        const randIndex = Math.floor(Math.random() * tempParticipants.length);
+                        currentWinnersByMachine[m].push(tempParticipants[randIndex]);
+                        tempParticipants.splice(randIndex, 1);
+                    }
+                }
+            }
+
+            setTimeout(() => {
+                clearInterval(timerInterval);
+                clearInterval(soundInterval);
+
+                isSpinning = false;
+
+                for (let m = 0; m < activeMachineCount; m++) {
+                    const spinBtn = document.getElementById(`spinBtn_${m}`);
+                    if (spinBtn) spinBtn.disabled = false;
+
+                    const spinBtnLabel = document.getElementById(`spinBtnLabel_${m}`);
+                    if (spinBtnLabel) spinBtnLabel.innerText = "▶ PUTAR MESIN";
+
+                    const machineContainer = document.getElementById(`machineContainer_${m}`);
+                    if (machineContainer) machineContainer.classList.remove('animate-shake');
+
+                    const shuffleDisplay = document.getElementById(`shuffleDisplay_${m}`);
+                    if (shuffleDisplay) shuffleDisplay.classList.add('hidden');
+
+                    const crankKnob = document.getElementById(`crankKnob_${m}`);
+                    if (crankKnob) crankKnob.style.transform = 'rotate(0deg)';
+                }
+
+                balls.forEach(b => {
+                    const animClass = b.dataset.anim || 'bouncing-ball-1';
+                    b.classList.remove(animClass);
+                });
+
+                dispenseCapsulesPerMachine();
+            }, spinDuration * 1000);
+        }
+
+        function dispenseCapsulesPerMachine() {
+            for (let m = 0; m < activeMachineCount; m++) {
+                const container = document.getElementById(`outputCapsulesContainer_${m}`);
+                if (!container) continue;
+                container.innerHTML = "";
+
+                const machineWinners = currentWinnersByMachine[m] || [];
+                for (let i = 0; i < machineWinners.length; i++) {
+                    const colorClass = ballColors[(i + m) % ballColors.length];
+                    const capsule = document.createElement('div');
+                    capsule.className = `animate-capsule-drop w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr ${colorClass} border-2 border-slate-900 shadow-xl flex items-center justify-center cursor-pointer transition hover:scale-110 active:scale-95 text-white text-xs font-bold relative overflow-hidden`;
+                    capsule.innerHTML = `
+                        <div class="absolute inset-x-0 top-1/2 h-1 bg-slate-900/50"></div>
+                        <i class="fa-solid fa-gift text-white/90 relative z-10 text-xs"></i>
+                    `;
+                    capsule.onclick = openCapsules;
+                    container.appendChild(capsule);
+                }
+            }
+
+            playSoundEffect('drop');
+            showToast(`Kapsul keluar di masing-masing tray mesin! Membuka dalam ${openDuration} detik.`);
+
+            if (autoOpenTimer) clearTimeout(autoOpenTimer);
+            autoOpenTimer = setTimeout(() => {
+                openCapsules();
+            }, openDuration * 1000);
+        }
+
+        function openCapsules() {
+            if (autoOpenTimer) {
+                clearTimeout(autoOpenTimer);
+                autoOpenTimer = null;
+            }
+
+            let allWinnersList = [];
+            for (let m = 0; m < activeMachineCount; m++) {
+                if (currentWinnersByMachine[m]) {
+                    allWinnersList = allWinnersList.concat(currentWinnersByMachine[m]);
+                }
+            }
+
+            if (allWinnersList.length === 0) return;
+
+            for (let m = 0; m < activeMachineCount; m++) {
+                const capsulesTray = document.getElementById(`outputCapsulesContainer_${m}`);
+                if (capsulesTray) {
+                    capsulesTray.innerHTML = `<p class="text-[9px] text-slate-500 italic font-medium text-center">Tray</p>`;
+                }
+            }
+
+            playSoundEffect('fanfare');
+            triggerConfetti();
+
+            const grid = document.getElementById('winnersDisplayGrid');
+            if (grid) {
+                grid.innerHTML = "";
+
+                for (let m = 0; m < activeMachineCount; m++) {
+                    const mWinners = currentWinnersByMachine[m] || [];
+                    if (mWinners.length === 0) continue;
+
+                    const machineCardBox = document.createElement('div');
+                    machineCardBox.className = "bg-slate-900/80 border border-indigo-500/30 p-5 rounded-2xl flex flex-col gap-3 shadow-xl items-center text-center mx-auto w-full max-w-xl";
+                    
+                    let winnerNamesHtml = mWinners.map((w, idx) => {
+                        if (pullCount === 1) {
+                            return `
+                                <div class="w-full bg-slate-950/90 border border-indigo-500/40 px-6 py-6 rounded-2xl flex flex-col items-center justify-center text-center my-1 shadow-inner relative mt-3">
+                                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-indigo-600 border border-indigo-400 rounded-full text-[10px] font-bold text-indigo-100 shadow-md uppercase tracking-wider whitespace-nowrap">
+                                        YANG TERPILIH
+                                    </div>
+                                    <span class="text-2xl sm:text-3xl font-bold text-white tracking-wide font-sans mt-2">${w}</span>
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div class="bg-slate-950/70 border border-slate-800 px-3 py-2 rounded-xl flex items-center justify-between w-full">
+                                    <span class="text-[11px] font-bold text-indigo-400">#${idx + 1}</span>
+                                    <span class="text-sm font-bold text-white tracking-wide">${w}</span>
+                                </div>
+                            `;
+                        }
+                    }).join('');
+
+                    if (pullCount === 1) {
+                        machineCardBox.innerHTML = `
+                            <div class="w-full flex flex-col items-center justify-center">${winnerNamesHtml}</div>
+                        `;
+                    } else {
+                        machineCardBox.innerHTML = `
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2 w-full">
+                                <span class="font-game font-bold text-xs text-sky-400 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-users"></i> KELOMPOK #${m + 1} (${mWinners.length} Terpilih)
+                                </span>
+                            </div>
+                            <div class="space-y-1.5 mt-1 w-full">${winnerNamesHtml}</div>
+                        `;
+                    }
+                    grid.appendChild(machineCardBox);
+                }
+            }
+
+            if (isAutoRemoveEnabled) {
+                allWinnersList.forEach(winner => {
+                    const idx = participants.indexOf(winner);
+                    if (idx > -1) {
+                        participants.splice(idx, 1);
+                    }
+                });
+
+                const nameInput = document.getElementById('nameInput');
+                if (nameInput) nameInput.value = participants.join('\n');
+                
+                const participantCount = document.getElementById('participantCount');
+                if (participantCount) participantCount.innerText = `${participants.length} Peserta`;
+                
+                renderBalls();
+            }
+
+            sessionCounter++;
+            const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            
+            history.push({
+                id: Date.now() + Math.random(),
+                sessionNo: sessionCounter,
+                type: 'group-batch',
+                machines: {...currentWinnersByMachine},
+                totalCount: allWinnersList.length,
+                time: timeStr
+            });
+
+            const modalTitle = document.getElementById('modalTitle');
+            if (modalTitle) {
+                modalTitle.innerText = `HASIL UNDIAN ${activeMachineCount} MESIN`;
+            }
+            
+            const manualButtons = document.getElementById('manualModalButtons');
+            const autoCloseBtn = document.getElementById('autoModalCloseBtn');
+            
+            if (isAutoRemoveEnabled) {
+                if (manualButtons) manualButtons.classList.add('hidden');
+                if (autoCloseBtn) autoCloseBtn.classList.remove('hidden');
+            } else {
+                if (manualButtons) manualButtons.classList.remove('hidden');
+                if (autoCloseBtn) autoCloseBtn.classList.add('hidden');
+            }
+
+            const modal = document.getElementById('winnerModal');
+            if (modal) modal.classList.remove('hidden');
+
+            speakTextJokowi(allWinnersList);
+            renderHistory();
+        }
+
+        function closeWinnerModalOnly() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            const modal = document.getElementById('winnerModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function removeWinnersAndClose() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            let allWinnersList = [];
+            Object.values(currentWinnersByMachine).forEach(list => allWinnersList.push(...list));
+
+            if (!isAutoRemoveEnabled) {
+                allWinnersList.forEach(winner => {
+                    const idx = participants.indexOf(winner);
+                    if (idx > -1) {
+                        participants.splice(idx, 1);
+                    }
+                });
+
+                const nameInput = document.getElementById('nameInput');
+                if (nameInput) nameInput.value = participants.join('\n');
+                updateParticipantsList();
+            }
+
+            const modal = document.getElementById('winnerModal');
+            if (modal) modal.classList.add('hidden');
+            showToast("Selesai! Peserta terpilih dihapus dari mesin.");
+        }
+
+        function keepWinnersAndClose() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            let allWinnersList = [];
+            Object.values(currentWinnersByMachine).forEach(list => allWinnersList.push(...list));
+
+            if (isAutoRemoveEnabled) {
+                allWinnersList.forEach(winner => {
+                    if (!participants.includes(winner)) {
+                        participants.push(winner);
+                    }
+                });
+
+                const nameInput = document.getElementById('nameInput');
+                if (nameInput) nameInput.value = participants.join('\n');
+                updateParticipantsList();
+            }
+
+            const modal = document.getElementById('winnerModal');
+            if (modal) modal.classList.add('hidden');
+            showToast("Peserta dimasukkan kembali ke mesin!");
+        }
+
+        function renderHistory() {
+            const listContainer = document.getElementById('historyList');
+            if (!listContainer) return;
+            listContainer.innerHTML = "";
+
+            if (history.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 italic">Belum ada peserta terpilih.</p>`;
+                return;
+            }
+
+            const sortedHistoryForDisplay = [...history].sort((a, b) => (a.sessionNo || 0) - (b.sessionNo || 0));
+
+            sortedHistoryForDisplay.forEach((item) => {
+                const elem = document.createElement('div');
+                elem.className = "bg-slate-900/60 border border-slate-800 p-2.5 rounded-xl text-xs space-y-1.5 relative";
+                
+                let checkboxId = `hist_cb_${item.id || Math.random()}`;
+                let sessionNumLabel = item.sessionNo ? `Sesi Kelompok #${item.sessionNo}` : `Sesi Kelompok`;
+                
+                if (item.type === 'group-batch') {
+                    let subHtml = "";
+                    Object.keys(item.machines).forEach(mKey => {
+                        const mList = item.machines[mKey];
+                        if (mList && mList.length > 0) {
+                            let groupMembers = mList.map((name, idx) => `<span class="inline-block bg-indigo-500/15 text-indigo-300 px-1.5 py-0.5 rounded mr-1 mb-1 font-semibold">${idx+1}. ${name}</span>`).join('');
+                            subHtml += `
+                                <div class="bg-slate-950/60 border border-slate-800/80 p-2 rounded-lg space-y-1">
+                                    <span class="font-bold text-sky-400 block text-[11px]">Kelompok #${parseInt(mKey)+1}:</span>
+                                    <div>${groupMembers}</div>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    elem.innerHTML = `
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-1">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="${checkboxId}" value="${item.id}" class="history-checkbox accent-indigo-500 cursor-pointer w-3.5 h-3.5">
+                                <label for="${checkboxId}" class="font-bold text-amber-400 flex items-center gap-1 cursor-pointer">
+                                    <i class="fa-solid fa-users text-[10px]"></i> ${sessionNumLabel} (${item.totalCount} Terpilih)
+                                </label>
+                            </div>
+                            <span class="text-[10px] text-slate-500">${item.time}</span>
+                        </div>
+                        <div class="pt-1.5 space-y-1.5">${subHtml}</div>
+                    `;
+                }
+                listContainer.appendChild(elem);
+            });
+        }
+
+        function deleteSelectedHistory() {
+            const checkboxes = document.querySelectorAll('.history-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showToast("Pilih minimal satu riwayat yang ingin dihapus!", "error");
+                return;
+            }
+
+            const idsToDelete = Array.from(checkboxes).map(cb => parseFloat(cb.value));
+            history = history.filter(h => !idsToDelete.includes(h.id));
+
+            renderHistory();
+            showToast(`${idsToDelete.length} riwayat terpilih berhasil dihapus.`);
+        }
+
+        function exportHistoryTxt() {
+            if (history.length === 0) {
+                showToast("Belum ada riwayat terpilih untuk diekspor!", "error");
+                return;
+            }
+            const sortedHistory = [...history].sort((a, b) => (a.sessionNo || 0) - (b.sessionNo || 0));
+
+            let content = "=== DAFTAR PESERTA TERPILIH KELOMPOK ===\n\n";
+            sortedHistory.forEach((h) => {
+                let sessionNumLabel = h.sessionNo ? `Sesi Kelompok #${h.sessionNo}` : `Sesi Kelompok`;
+                if (h.type === 'group-batch') {
+                    content += `[${sessionNumLabel} - ${h.time}] (${h.totalCount} Terpilih):\n`;
+                    Object.keys(h.machines).forEach(mKey => {
+                        const mList = h.machines[mKey];
+                        if (mList && mList.length > 0) {
+                            content += `   Kelompok #${parseInt(mKey)+1}:\n`;
+                            mList.forEach((n, ni) => {
+                                content += `      ${ni + 1}. ${n}\n`;
+                            });
+                        }
+                    });
+                }
+                content += "\n";
+            });
+
+            downloadFile(content, "daftar_peserta_terpilih_kelompok.txt", "text/plain");
+        }
+
+        function exportHistoryCsv() {
+            if (history.length === 0) {
+                showToast("Belum ada riwayat terpilih untuk diekspor!", "error");
+                return;
+            }
+            
+            const sortedHistory = [...history].sort((a, b) => (a.sessionNo || 0) - (b.sessionNo || 0));
+
+            let content = "\uFEFFSesi Pengundian,Waktu Sesi,Nama Kelompok,Nomor Urut,Nama Peserta Terpilih\n";
+            
+            sortedHistory.forEach((h, hIdx) => {
+                let sessionLabel = h.sessionNo ? `Sesi Kelompok #${h.sessionNo}` : `Sesi Kelompok`;
+                if (h.type === 'group-batch') {
+                    Object.keys(h.machines).forEach(mKey => {
+                        const mList = h.machines[mKey];
+                        if (mList && mList.length > 0) {
+                            mList.forEach((n, idx) => {
+                                let cleanName = n.replace(/"/g, '""');
+                                content += `"${sessionLabel}","${h.time}","Kelompok #${parseInt(mKey)+1}","${idx + 1}","${cleanName}"\n`;
+                            });
+                        }
+                    });
+                }
+                if (hIdx < sortedHistory.length - 1) {
+                    content += `,,,,\n`;
+                }
+            });
+
+            downloadFile(content, "daftar_peserta_terpilih_kelompok.csv", "text/csv;charset=utf-8;");
+        }
+
+        function downloadFile(content, fileName, contentType) {
+            const a = document.createElement('a');
+            const file = new Blob([content], { type: contentType });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function triggerConfetti() {
+            try {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } catch (e) {
+                console.log("Confetti error", e);
+            }
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            if (type === 'error') {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-400";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-info text-indigo-400";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
