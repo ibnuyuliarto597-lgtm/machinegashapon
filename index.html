@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>machineGASHAPON - Mesin Gacha Tanpa Batas</title>
+    <title>Gashapon Acara Kampus - Multi Machine Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -16,10 +16,67 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         .font-game {
             font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Canvas Particle Background */
+        #themeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Theme Styles & Dashboard Custom Colors */
+        .theme-cyber {
+            background: #020617 !important;
+            background-image: radial-gradient(at 50% 0%, #1e1b4b 0px, transparent 75%), linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%) !important;
+        }
+        .theme-cyber .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 0 15px rgba(99, 102, 241, 0.15);
+        }
+
+        .theme-neon {
+            background: #090514 !important;
+            background-image: radial-gradient(at 50% 0%, #3b0764 0px, transparent 75%), linear-gradient(135deg, #090514 0%, #17092b 50%, #2e1065 100%) !important;
+        }
+        .theme-neon .glass-panel {
+            background: rgba(23, 9, 43, 0.88);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .theme-emerald {
+            background: #022c22 !important;
+            background-image: radial-gradient(at 50% 0%, #064e3b 0px, transparent 75%), linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022c22 100%) !important;
+        }
+        .theme-emerald .glass-panel {
+            background: rgba(6, 78, 59, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.65), 0 0 15px rgba(16, 185, 129, 0.18);
+        }
+
+        .theme-amber {
+            background: #1c1917 !important;
+            background-image: radial-gradient(at 50% 0%, #7c2d12 0px, transparent 75%), linear-gradient(135deg, #1c1917 0%, #451a03 50%, #292524 100%) !important;
+        }
+        .theme-amber .glass-panel {
+            background: rgba(43, 22, 12, 0.88);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 18px rgba(245, 158, 11, 0.2);
         }
 
         /* Machine Shake Animation */
@@ -35,7 +92,7 @@
             animation: shake 0.1s infinite;
         }
 
-        /* Chaotic Ball Bouncing Animations */
+        /* Ball Bouncing Animations */
         @keyframes chaos-bounce-1 {
             0% { transform: translate(0, 0) rotate(0deg); }
             25% { transform: translate(50px, -80px) rotate(140deg); }
@@ -78,17 +135,8 @@
             background: radial-gradient(circle at center 40%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 23, 42, 0) 70%);
         }
 
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-        }
-
         .gacha-globe-glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(186, 230, 253, 0.20));
             backdrop-filter: blur(1px);
-            border: 4px solid #0f172a;
             box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.75), inset 0 0 8px rgba(0, 0, 0, 0.15);
         }
 
@@ -96,6 +144,7 @@
             border: 4px solid #0f172a;
         }
 
+        /* Machine Color Themes */
         .theme-blue-bg { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
         .theme-blue-dark { background-color: #1e40af; }
 
@@ -123,51 +172,69 @@
             100% { filter: hue-rotate(360deg); }
         }
 
+        .touch-action-manipulate {
+            touch-action: manipulation;
+        }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body class="bg-gradient-to-br text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white theme-cyber">
+
+    <!-- Interactive Background Particle Canvas -->
+    <canvas id="themeCanvas"></canvas>
 
     <!-- Header Section -->
-    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 border border-indigo-400/30 flex items-center justify-center shadow-lg shadow-indigo-600/20">
-                    <i class="fa-solid fa-graduation-cap text-white text-lg"></i>
+    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 shadow-sm relative">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-600 border border-indigo-400/30 flex items-center justify-center shadow-lg shadow-indigo-600/20 shrink-0">
+                    <i class="fa-solid fa-graduation-cap text-white text-base sm:text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-100 tracking-wide font-sans">
+                    <h1 class="text-base sm:text-lg font-bold text-slate-100 tracking-wide font-sans leading-tight">
                         machineGASHAPON
                     </h1>
-                    <p class="text-xs text-indigo-300 font-medium">Mesin Gacha Tanpa Batas</p>
+                    <p class="text-[10px] sm:text-xs text-indigo-300 font-medium">Mesin Gacha Tanpa Batas</p>
                 </div>
             </div>
 
             <!-- Controls Action Buttons -->
-            <div class="flex flex-wrap items-center gap-3 sm:gap-4">
-                <button id="bgmToggleBtn" onclick="toggleBGM()" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-2 text-xs font-semibold">
-                    <i id="bgmIcon" class="fa-solid fa-music text-indigo-400 animate-pulse"></i>
-                    <span id="bgmStatusText" class="hidden sm:inline">BGM: ON</span>
-                </button>
-                
-                <div class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700 rounded-xl px-2.5 py-1.5">
-                    <i class="fa-solid fa-microphone text-indigo-400 text-xs"></i>
-                    <select id="voiceModeSelect" onchange="changeVoiceMode(this.value)" class="bg-transparent text-xs text-slate-200 font-semibold focus:outline-none cursor-pointer">
-                        <option value="male" class="bg-slate-900 text-slate-200" selected>Mode: Laki-Laki</option>
-                        <option value="female" class="bg-slate-900 text-slate-200">Mode: Perempuan</option>
-                        <option value="jokowi" class="bg-slate-900 text-slate-200">Mode: Pak Jokowi</option>
-                        <option value="prabowo" class="bg-slate-900 text-slate-200">Mode: Pak Prabowo</option>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <!-- Global App Theme Switcher -->
+                <div class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700 rounded-xl px-2 py-1.5 sm:px-2.5">
+                    <i class="fa-solid fa-palette text-indigo-400 text-xs"></i>
+                    <select id="appThemeSelect" onchange="changeGlobalTheme(this.value)" class="bg-transparent text-[11px] sm:text-xs text-slate-200 font-semibold focus:outline-none cursor-pointer">
+                        <option value="cyber" class="bg-slate-900 text-slate-200" selected>Cyber</option>
+                        <option value="neon" class="bg-slate-900 text-slate-200">Neon</option>
+                        <option value="emerald" class="bg-slate-900 text-slate-200">Emerald</option>
+                        <option value="amber" class="bg-slate-900 text-slate-200">Amber</option>
                     </select>
                 </div>
 
-                <button id="ttsToggleBtn" onclick="toggleTTS()" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-2 text-xs font-semibold">
+                <button id="bgmToggleBtn" onclick="toggleBGM()" class="px-2.5 py-1.5 sm:px-3 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold touch-action-manipulate">
+                    <i id="bgmIcon" class="fa-solid fa-music text-indigo-400 animate-pulse"></i>
+                    <span id="bgmStatusText" class="hidden xs:inline">BGM</span>
+                </button>
+                
+                <div class="flex items-center gap-1 bg-slate-800/90 border border-slate-700 rounded-xl px-2 py-1.5 sm:px-2.5">
+                    <i class="fa-solid fa-microphone text-indigo-400 text-xs"></i>
+                    <select id="voiceModeSelect" onchange="changeVoiceMode(this.value)" class="bg-transparent text-[11px] sm:text-xs text-slate-200 font-semibold focus:outline-none cursor-pointer max-w-[110px] sm:max-w-none truncate">
+                        <option value="male" class="bg-slate-900 text-slate-200" selected>Laki-Laki</option>
+                        <option value="female" class="bg-slate-900 text-slate-200">Perempuan</option>
+                        <option value="jokowi" class="bg-slate-900 text-slate-200">Pak Jokowi</option>
+                        <option value="prabowo" class="bg-slate-900 text-slate-200">Pak Prabowo</option>
+                    </select>
+                </div>
+
+                <button id="ttsToggleBtn" onclick="toggleTTS()" class="px-2.5 py-1.5 sm:px-3 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold touch-action-manipulate">
                     <i id="ttsIcon" class="fa-solid fa-bullhorn text-indigo-400"></i>
-                    <span id="ttsStatusText" class="hidden sm:inline">Suara: ON</span>
+                    <span id="ttsStatusText" class="hidden xs:inline">Suara</span>
                 </button>
 
-                <button id="headerStageToggleBtn" onclick="toggleStageMode()" class="px-3 py-1.5 rounded-xl border border-indigo-500/40 bg-indigo-600/30 text-indigo-200 hover:bg-indigo-600 hover:text-white transition flex items-center gap-2 text-xs font-semibold shadow-sm">
+                <button id="headerStageToggleBtn" onclick="toggleStageMode()" class="px-2.5 py-1.5 sm:px-3 rounded-xl border border-indigo-500/40 bg-indigo-600/30 text-indigo-200 hover:bg-indigo-600 hover:text-white transition flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold shadow-sm touch-action-manipulate">
                     <i class="fa-solid fa-expand"></i>
                     <span class="hidden sm:inline">Layar Penuh</span>
                 </button>
@@ -176,36 +243,36 @@
     </header>
 
     <!-- Stage Mode Control Overlay -->
-    <div id="stageControlOverlay" class="fixed top-4 left-0 right-0 z-50 px-6 flex flex-wrap justify-between items-center gap-4 pointer-events-none hidden">
-        <div class="pointer-events-auto bg-slate-900/90 border border-indigo-500/40 backdrop-blur-md px-4 py-2 rounded-2xl shadow-2xl flex items-center gap-3">
-            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-            <span class="text-xs font-bold text-indigo-300 uppercase tracking-widest font-game">PANGGUNG UNDIAN UTAMA</span>
+    <div id="stageControlOverlay" class="fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-6 flex flex-wrap justify-between items-center gap-2 sm:gap-4 pointer-events-none hidden">
+        <div class="pointer-events-auto bg-slate-900/90 border border-indigo-500/40 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl shadow-2xl flex items-center gap-2 sm:gap-3">
+            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="text-[10px] sm:text-xs font-bold text-indigo-300 uppercase tracking-widest font-game">PANGGUNG UTAMA</span>
         </div>
-        <div class="pointer-events-auto flex flex-wrap items-center gap-4">
-            <button onclick="spinGashapon()" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs rounded-2xl border-2 border-slate-900 shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2">
-                <i class="fa-solid fa-play"></i> PUTAR GACHA
+        <div class="pointer-events-auto flex flex-wrap items-center gap-2 sm:gap-4">
+            <button onclick="spinGashapon()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs rounded-xl sm:rounded-2xl border-2 border-slate-900 shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-1.5 touch-action-manipulate">
+                <i class="fa-solid fa-play text-[10px]"></i> PUTAR GACHA
             </button>
-            <button id="exitStageBtn" onclick="toggleStageMode()" class="px-4 py-2 bg-indigo-600/90 hover:bg-indigo-500 text-white font-bold text-xs rounded-2xl border-2 border-indigo-400 shadow-2xl backdrop-blur-md transition transform hover:scale-105 active:scale-95 flex items-center gap-2">
-                <i class="fa-solid fa-compress"></i>
-                <span>Keluar Layar Penuh</span>
+            <button id="exitStageBtn" onclick="toggleStageMode()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600/90 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl sm:rounded-2xl border-2 border-indigo-400 shadow-2xl backdrop-blur-md transition transform hover:scale-105 active:scale-95 flex items-center gap-1.5 touch-action-manipulate">
+                <i class="fa-solid fa-compress text-[10px]"></i>
+                <span>Keluar</span>
             </button>
         </div>
     </div>
 
     <!-- Main Layout -->
-    <main id="mainLayout" class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-8 items-start transition-all duration-500">
+    <main id="mainLayout" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start transition-all duration-500">
         
         <!-- Left Sidebar Controls -->
-        <section id="sidebarPanel" class="lg:col-span-4 space-y-6 order-2 lg:order-1 transition-all duration-300">
+        <section id="sidebarPanel" class="lg:col-span-4 space-y-4 sm:space-y-6 order-2 lg:order-1 transition-all duration-300">
             
             <!-- Participants Card -->
-            <div class="glass-panel p-5 rounded-2xl shadow-xl">
+            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center mb-3">
-                    <h2 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                    <h2 class="font-bold text-sm sm:text-base text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-users text-indigo-400"></i>
                         Daftar Peserta
                     </h2>
-                    <span id="participantCount" class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    <span id="participantCount" class="text-[11px] sm:text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                         0 Peserta
                     </span>
                 </div>
@@ -213,35 +280,54 @@
                 <p class="text-xs text-slate-400 mb-2">Masukkan nama (1 nama per baris) atau scan dari gambar/screenshot:</p>
                 
                 <textarea id="nameInput" rows="5" 
-                    class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition resize-none"
+                    class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition resize-none"
                     placeholder="Dr. Hendra Wijaya&#10;Prof. Anisa Fitri&#10;Budi Santoso (Mhs)&#10;Siti Rahmawati&#10;Rudi Hermawan"></textarea>
                 
                 <div class="flex flex-wrap gap-2 mt-3">
-                    <button onclick="updateParticipantsList()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm transition shadow-md active:scale-[0.98]">
+                    <button onclick="updateParticipantsList()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs sm:text-sm transition shadow-md active:scale-[0.98] touch-action-manipulate">
                         <i class="fa-solid fa-arrows-rotate mr-1"></i> Perbarui
                     </button>
                     <!-- OCR Screenshot / JPG Import Button -->
-                    <label class="px-3 py-2 bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white rounded-xl text-sm transition border border-purple-500/40 cursor-pointer flex items-center justify-center gap-1.5" title="Scan nama dari Screenshot/JPG (AI OCR)">
+                    <label class="px-2.5 sm:px-3 py-2 bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white rounded-xl text-xs sm:text-sm transition border border-purple-500/40 cursor-pointer flex items-center justify-center gap-1.5 touch-action-manipulate" title="Scan nama dari Screenshot/JPG (AI OCR)">
                         <i class="fa-solid fa-camera"></i>
                         <span class="text-xs font-bold">Scan Gambar</span>
                         <input type="file" id="ocrImageInput" accept="image/png,image/jpeg,image/jpg" onchange="extractNamesFromImage(event)" class="hidden">
                     </label>
-                    <label class="px-3 py-2 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-xl text-sm transition border border-emerald-500/40 cursor-pointer flex items-center justify-center" title="Impor dari File TXT/CSV">
+                    <label class="px-2.5 sm:px-3 py-2 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-xl text-xs sm:text-sm transition border border-emerald-500/40 cursor-pointer flex items-center justify-center touch-action-manipulate" title="Impor dari File TXT/CSV">
                         <i class="fa-solid fa-file-arrow-up"></i>
                         <input type="file" id="importFile" accept=".txt,.csv" onchange="importDataFromFile(event)" class="hidden">
                     </label>
-                    <button onclick="clearParticipants()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition border border-slate-700" title="Kosongkan">
+                    <button onclick="clearParticipants()" class="px-2.5 sm:px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs sm:text-sm transition border border-slate-700 touch-action-manipulate" title="Kosongkan">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Spin Settings Card -->
-            <div class="glass-panel p-5 rounded-2xl shadow-xl space-y-4">
-                <h2 class="font-bold text-base text-slate-100 flex items-center gap-2">
+            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-xl space-y-4">
+                <h2 class="font-bold text-sm sm:text-base text-slate-100 flex items-center gap-2">
                     <i class="fa-solid fa-sliders text-indigo-400"></i>
                     Pengaturan Undian
                 </h2>
+
+                <!-- 4 Theme Selector Buttons in Settings -->
+                <div class="space-y-1.5 pb-2 border-b border-slate-800/80">
+                    <label class="text-xs font-semibold text-slate-300 block">Pilihan Tema Aplikasi (4 Tema):</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
+                        <button onclick="changeGlobalTheme('cyber')" class="theme-btn py-1.5 px-2 bg-slate-900 border border-indigo-500/50 hover:border-indigo-400 text-indigo-300 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 touch-action-manipulate" data-theme="cyber">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Cyber
+                        </button>
+                        <button onclick="changeGlobalTheme('neon')" class="theme-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-purple-400 text-purple-300 rounded-lg text-[11px] font-semibold flex items-center justify-center gap-1 touch-action-manipulate" data-theme="neon">
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Neon
+                        </button>
+                        <button onclick="changeGlobalTheme('emerald')" class="theme-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-emerald-400 text-emerald-300 rounded-lg text-[11px] font-semibold flex items-center justify-center gap-1 touch-action-manipulate" data-theme="emerald">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Emerald
+                        </button>
+                        <button onclick="changeGlobalTheme('amber')" class="theme-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-amber-400 text-amber-300 rounded-lg text-[11px] font-semibold flex items-center justify-center gap-1 touch-action-manipulate" data-theme="amber">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Amber
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Multi-Machine Selector -->
                 <div class="space-y-1.5 pb-2 border-b border-slate-800/80">
@@ -252,10 +338,29 @@
                         </span>
                     </div>
                     <div class="flex gap-1.5 pt-1">
-                        <button onclick="setMachineCount(1)" class="machine-count-btn flex-1 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow" data-count="1">Mesin #1</button>
-                        <button onclick="setMachineCount(2)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="2">Mesin #2</button>
-                        <button onclick="setMachineCount(3)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="3">Mesin #3</button>
-                        <button onclick="setMachineCount(4)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="4">Mesin #4</button>
+                        <button onclick="setMachineCount(1)" class="machine-count-btn flex-1 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow touch-action-manipulate" data-count="1">Mesin #1</button>
+                        <button onclick="setMachineCount(2)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700 touch-action-manipulate" data-count="2">Mesin #2</button>
+                        <button onclick="setMachineCount(3)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700 touch-action-manipulate" data-count="3">Mesin #3</button>
+                        <button onclick="setMachineCount(4)" class="machine-count-btn flex-1 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700 touch-action-manipulate" data-count="4">Mesin #4</button>
+                    </div>
+                </div>
+
+                <!-- 4 Machine Model Design Selector -->
+                <div class="space-y-1.5 pb-2 border-b border-slate-800/80">
+                    <label class="text-xs font-semibold text-slate-300 block">Model Desain Mesin (4 Model):</label>
+                    <div class="grid grid-cols-2 gap-1.5 pt-1">
+                        <button onclick="changeMachineModel('classic')" class="model-btn py-1.5 px-2 bg-slate-900 border-2 border-indigo-400 text-indigo-300 font-bold rounded-lg text-[11px] flex items-center justify-center gap-1.5 touch-action-manipulate" data-model="classic">
+                            <i class="fa-solid fa-cube text-xs"></i> Classic Capsule
+                        </button>
+                        <button onclick="changeMachineModel('cyber')" class="model-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 font-semibold rounded-lg text-[11px] flex items-center justify-center gap-1.5 touch-action-manipulate" data-model="cyber">
+                            <i class="fa-solid fa-square-full text-xs"></i> Cyber Cube
+                        </button>
+                        <button onclick="changeMachineModel('sphere')" class="model-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 font-semibold rounded-lg text-[11px] flex items-center justify-center gap-1.5 touch-action-manipulate" data-model="sphere">
+                            <i class="fa-solid fa-circle text-xs"></i> Sphere Chamber
+                        </button>
+                        <button onclick="changeMachineModel('arcade')" class="model-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 font-semibold rounded-lg text-[11px] flex items-center justify-center gap-1.5 touch-action-manipulate" data-model="arcade">
+                            <i class="fa-solid fa-gamepad text-xs"></i> Retro Arcade
+                        </button>
                     </div>
                 </div>
 
@@ -271,7 +376,7 @@
                         <span class="text-xs font-semibold text-slate-300">Hapus Nama Terpilih:</span>
                         <span id="autoRemoveStatusText" class="text-[10px] text-indigo-400 font-medium">Otomatis terhapus setelah terpilih</span>
                     </div>
-                    <button id="autoRemoveToggleBtn" onclick="toggleAutoRemove()" class="px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1.5 text-xs font-bold shadow-sm">
+                    <button id="autoRemoveToggleBtn" onclick="toggleAutoRemove()" class="px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1.5 text-xs font-bold shadow-sm touch-action-manipulate">
                         <i id="autoRemoveIcon" class="fa-solid fa-toggle-on text-emerald-400"></i>
                         <span id="autoRemoveLabel">Aktif</span>
                     </button>
@@ -286,8 +391,8 @@
                         </span>
                     </div>
                     
-                    <div class="flex items-center gap-2 pt-1">
-                        <div class="relative flex-1">
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <div class="relative flex-1 min-w-[100px]">
                             <input type="number" id="pullCountInput" min="1" value="1" 
                                 oninput="onCustomPullCountChange(this.value)" 
                                 onblur="onPullCountBlur(this)"
@@ -296,10 +401,10 @@
                         </div>
                         
                         <div class="flex gap-1">
-                            <button onclick="setPullCount(1)" class="pull-btn px-2.5 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow" data-count="1">1</button>
-                            <button onclick="setPullCount(5)" class="pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="5">5</button>
-                            <button onclick="setPullCount(10)" class="pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" data-count="10">10</button>
-                            <button onclick="setPullCountAll()" class="px-2.5 py-1.5 bg-slate-800 text-amber-400 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700" title="Pilih Semua Peserta Tersisa">Semua</button>
+                            <button onclick="setPullCount(1)" class="pull-btn px-2.5 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs border border-indigo-500 shadow touch-action-manipulate" data-count="1">1</button>
+                            <button onclick="setPullCount(5)" class="pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700 touch-action-manipulate" data-count="5">5</button>
+                            <button onclick="setPullCount(10)" class="pull-btn px-2.5 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700 touch-action-manipulate" data-count="10">10</button>
+                            <button onclick="setPullCountAll()" class="px-2.5 py-1.5 bg-slate-800 text-amber-400 hover:bg-slate-700 font-semibold rounded-lg text-xs border border-slate-700 touch-action-manipulate" title="Pilih Semua Peserta Tersisa">Semua</button>
                         </div>
                     </div>
                 </div>
@@ -328,27 +433,27 @@
 
                 <!-- Reset Settingan Button -->
                 <div class="pt-3 border-t border-slate-800/80">
-                    <button onclick="factoryReset()" class="w-full py-2 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-semibold rounded-xl text-xs transition border border-rose-500/40 flex items-center justify-center gap-2">
+                    <button onclick="factoryReset()" class="w-full py-2 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-semibold rounded-xl text-xs transition border border-rose-500/40 flex items-center justify-center gap-2 touch-action-manipulate">
                         <i class="fa-solid fa-rotate-right"></i> Reset Settingan (Atur Ulang Semua)
                     </button>
                 </div>
             </div>
 
             <!-- History Panel Card -->
-            <div class="glass-panel p-5 rounded-2xl shadow-xl">
+            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center mb-3">
-                    <h2 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                    <h2 class="font-bold text-sm sm:text-base text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-trophy text-amber-400"></i>
                         Riwayat Terpilih
                     </h2>
                     <div class="flex items-center gap-1">
-                        <button onclick="deleteSelectedHistory()" class="px-2 py-1 bg-rose-600/30 hover:bg-rose-600 text-xs text-rose-300 hover:text-white rounded border border-rose-500/40 transition" title="Hapus Riwayat Terpilih">
+                        <button onclick="deleteSelectedHistory()" class="px-2 py-1 bg-rose-600/30 hover:bg-rose-600 text-xs text-rose-300 hover:text-white rounded border border-rose-500/40 transition touch-action-manipulate" title="Hapus Riwayat Terpilih">
                             <i class="fa-solid fa-trash-can mr-1"></i> Hapus Pilihan
                         </button>
-                        <button onclick="exportHistoryTxt()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700" title="Ekspor TXT">
+                        <button onclick="exportHistoryTxt()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700 touch-action-manipulate" title="Ekspor TXT">
                             <i class="fa-solid fa-file-lines"></i>
                         </button>
-                        <button onclick="exportHistoryCsv()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700" title="Ekspor CSV">
+                        <button onclick="exportHistoryCsv()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700 touch-action-manipulate" title="Ekspor CSV">
                             <i class="fa-solid fa-file-csv"></i>
                         </button>
                     </div>
@@ -360,7 +465,7 @@
             </div>
 
             <!-- Complete Feature Info Box -->
-            <div class="glass-panel p-5 rounded-2xl shadow-xl space-y-3 border border-indigo-500/30">
+            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-xl space-y-3 border border-indigo-500/30">
                 <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
                     <div class="w-7 h-7 rounded-lg bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center text-indigo-300 text-xs">
                         <i class="fa-solid fa-circle-info"></i>
@@ -390,34 +495,34 @@
         </section>
 
         <!-- Right Side: Gashapon Visual Machines Grid -->
-        <section id="machineSection" class="lg:col-span-8 flex flex-col items-center justify-center order-1 lg:order-2 py-4 w-full">
-            <div id="machinesGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl items-center justify-items-center transition-all duration-500 mx-auto"></div>
+        <section id="machineSection" class="lg:col-span-8 flex flex-col items-center justify-center order-1 lg:order-2 py-2 sm:py-4 w-full">
+            <div id="machinesGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 w-full max-w-3xl items-center justify-items-center transition-all duration-500 mx-auto"></div>
         </section>
     </main>
 
     <!-- Winner Announcement Modal -->
-    <div id="winnerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-panel border-2 border-indigo-500/40 p-6 rounded-3xl max-w-3xl w-full text-center shadow-2xl space-y-5 transform transition-all duration-300">
+    <div id="winnerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="glass-panel border-2 border-indigo-500/40 p-5 sm:p-6 rounded-3xl max-w-3xl w-full text-center shadow-2xl space-y-4 sm:space-y-5 transform transition-all duration-300">
             
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 border-2 border-indigo-400 text-white text-2xl shadow-lg mb-1 animate-bounce">
+            <div class="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-indigo-600 border-2 border-indigo-400 text-white text-xl sm:text-2xl shadow-lg mb-1 animate-bounce">
                 <i class="fa-solid fa-trophy"></i>
             </div>
 
-            <h2 id="modalTitle" class="text-2xl font-game font-bold text-indigo-300">PESERTA TERPILIH PER MESIN</h2>
+            <h2 id="modalTitle" class="text-xl sm:text-2xl font-game font-bold text-indigo-300">PESERTA TERPILIH PER MESIN</h2>
 
-            <div id="winnersDisplayGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 max-h-[60vh] overflow-y-auto p-1"></div>
+            <div id="winnersDisplayGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 my-3 sm:my-4 max-h-[60vh] overflow-y-auto p-1"></div>
 
-            <div class="space-y-2 mt-6">
+            <div class="space-y-2 mt-4 sm:mt-6">
                 <div id="manualModalButtons" class="space-y-2 hidden">
-                    <button onclick="removeWinnersAndClose()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                    <button onclick="removeWinnersAndClose()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-lg flex items-center justify-center gap-2 touch-action-manipulate">
                         <i class="fa-solid fa-user-check"></i> Selesai (Hapus Terpilih dari Mesin)
                     </button>
-                    <button onclick="keepWinnersAndClose()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-sm transition border border-slate-700 flex items-center justify-center gap-2">
+                    <button onclick="keepWinnersAndClose()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-xs sm:text-sm transition border border-slate-700 flex items-center justify-center gap-2 touch-action-manipulate">
                         <i class="fa-solid fa-rotate-left"></i> Masukkan Kembali untuk Putaran Berikutnya
                     </button>
                 </div>
 
-                <button id="autoModalCloseBtn" onclick="closeWinnerModalOnly()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                <button id="autoModalCloseBtn" onclick="closeWinnerModalOnly()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-lg flex items-center justify-center gap-2 touch-action-manipulate">
                     <i class="fa-solid fa-check"></i> Tutup & Lanjutkan
                 </button>
             </div>
@@ -425,40 +530,40 @@
     </div>
 
     <!-- First-Time Tutorial / Guide Modal with Perfectly Paced Countdown -->
-    <div id="tutorialModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-panel border-2 border-indigo-500/50 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl space-y-6 transform transition-all duration-300">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-600 border border-indigo-400/30 flex items-center justify-center shadow-lg text-white text-xl">
+    <div id="tutorialModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="glass-panel border-2 border-indigo-500/50 p-5 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl space-y-4 sm:space-y-6 transform transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 sm:pb-4">
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-indigo-600 border border-indigo-400/30 flex items-center justify-center shadow-lg text-white text-lg sm:text-xl shrink-0">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-game font-bold text-slate-100">Selamat Datang di machineGASHAPON!</h2>
-                        <p class="text-xs text-indigo-300">Panduan Singkat Penggunaan Mesin Gacha</p>
+                        <h2 class="text-base sm:text-xl font-game font-bold text-slate-100 leading-tight">Selamat Datang di machineGASHAPON!</h2>
+                        <p class="text-[11px] sm:text-xs text-indigo-300">Panduan Singkat Penggunaan Mesin Gacha</p>
                     </div>
                 </div>
                 <!-- Countdown Badge -->
-                <div class="flex flex-col items-end">
-                    <span id="tutorialCountdownTimer" class="text-base font-game font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/30">12s</span>
+                <div class="flex flex-col items-end shrink-0">
+                    <span id="tutorialCountdownTimer" class="text-xs sm:text-base font-game font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-xl border border-amber-500/30">12s</span>
                     <span class="text-[9px] text-slate-400 mt-0.5">Auto-tutup</span>
                 </div>
             </div>
 
-            <div class="space-y-4 text-xs sm:text-sm text-slate-300">
-                <div class="flex items-start gap-3">
-                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+            <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-300">
+                <div class="flex items-start gap-2.5 sm:gap-3">
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5 text-xs">1</div>
                     <p><strong>Daftar Peserta:</strong> Masukkan nama peserta (1 nama per baris) atau gunakan tombol <em>Scan Gambar</em> untuk unggah screenshot/JPG daftar nama secara otomatis.</p>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+                <div class="flex items-start gap-2.5 sm:gap-3">
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5 text-xs">2</div>
                     <p><strong>Jumlah Mesin & Pemenang:</strong> Atur jumlah mesin (1-4 mesin) dan jumlah pemenang per spin sesuai kebutuhan acara Anda.</p>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+                <div class="flex items-start gap-2.5 sm:gap-3">
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5 text-xs">3</div>
                     <p><strong>Putar Gacha:</strong> Klik tombol <em>Putar Mesin</em>, tunggu pengocokan bola, dan saksikan kapsul pemenang keluar dengan meriah!</p>
                 </div>
                 <div class="flex items-start gap-3">
-                    <div class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">4</div>
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold flex-shrink-0 mt-0.5 text-xs">4</div>
                     <p><strong>Ekspor Riwayat:</strong> Anda dapat menyimpan dan mengunduh hasil undian ke format TXT atau tabel CSV yang rapi.</p>
                 </div>
             </div>
@@ -468,31 +573,31 @@
                 <div id="tutorialProgressBar" class="bg-indigo-500 h-full w-full transition-all duration-1000 ease-linear"></div>
             </div>
 
-            <button onclick="closeTutorialModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+            <button onclick="closeTutorialModal()" class="w-full py-2.5 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl text-xs sm:text-sm transition shadow-lg flex items-center justify-center gap-2 touch-action-manipulate">
                 <i class="fa-solid fa-rocket"></i> Mulai Gunakan Aplikasi
             </button>
         </div>
     </div>
 
     <!-- Complete Feature Info Modal -->
-    <div id="featureInfoModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-panel border-2 border-indigo-500/50 p-6 sm:p-8 rounded-3xl max-w-2xl w-full shadow-2xl space-y-6 transform transition-all duration-300 max-h-[85vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center text-indigo-300">
+    <div id="featureInfoModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="glass-panel border-2 border-indigo-500/50 p-5 sm:p-8 rounded-3xl max-w-2xl w-full shadow-2xl space-y-5 sm:space-y-6 transform transition-all duration-300 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 sm:pb-4">
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center text-indigo-300 shrink-0">
                         <i class="fa-solid fa-circle-info"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-game font-bold text-slate-100">Informasi & Fitur machineGASHAPON</h2>
-                        <p class="text-xs text-indigo-300">Panduan lengkap semua fitur canggih</p>
+                        <h2 class="text-base sm:text-lg font-game font-bold text-slate-100">Informasi & Fitur machineGASHAPON</h2>
+                        <p class="text-[11px] sm:text-xs text-indigo-300">Panduan lengkap semua fitur canggih</p>
                     </div>
                 </div>
-                <button onclick="toggleFeatureInfoModal(false)" class="text-slate-400 hover:text-white text-lg px-2 py-1">
+                <button onclick="toggleFeatureInfoModal(false)" class="text-slate-400 hover:text-white text-lg px-2 py-1 touch-action-manipulate">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div class="space-y-4 text-xs sm:text-sm text-slate-300">
+            <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-300">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 space-y-1">
                         <h3 class="font-bold text-indigo-300 flex items-center gap-2">
@@ -525,7 +630,7 @@
             </div>
 
             <div class="pt-2 border-t border-slate-800 text-center">
-                <button onclick="toggleFeatureInfoModal(false)" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow">
+                <button onclick="toggleFeatureInfoModal(false)" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow touch-action-manipulate">
                     Tutup Informasi
                 </button>
             </div>
@@ -533,7 +638,7 @@
     </div>
 
     <!-- Developer Credit Footer -->
-    <footer class="w-full py-4 px-4 text-center border-t border-slate-900/80 bg-slate-950/40 text-[10px] text-slate-500 flex flex-col sm:flex-row items-center justify-center gap-2 select-none">
+    <footer class="w-full py-3 sm:py-4 px-4 text-center border-t border-slate-900/80 bg-slate-950/40 text-[10px] sm:text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 select-none">
         <span>machineGASHAPON © 2026</span>
         <span class="hidden sm:inline">•</span>
         <span class="opacity-70 hover:opacity-100 transition cursor-pointer" onclick="toggleFeatureInfoModal(true)" title="Informasi & Pengembang">
@@ -542,9 +647,9 @@
     </footer>
 
     <!-- Toast Notification Popup -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="glass-panel border border-indigo-500/40 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
-            <i id="toastIcon" class="fa-solid fa-circle-info text-indigo-400"></i>
+    <div id="toast" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="glass-panel border border-indigo-500/40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 sm:gap-3">
+            <i id="toastIcon" class="fa-solid fa-circle-info text-indigo-400 text-xs sm:text-sm"></i>
             <span id="toastMsg" class="text-xs font-semibold text-slate-200">Notifikasi</span>
         </div>
     </div>
@@ -563,33 +668,21 @@
         let pullCount = 1; 
         let currentWinnersByMachine = {}; 
         let activeVoiceMode = 'male';
+        let currentGlobalTheme = 'cyber';
         let tutorialInterval = null;
 
         let activeMachineCount = 1;
         let machineColors = ['blue', 'purple', 'emerald', 'amber'];
+        let currentMachineModel = 'classic'; // Default 4-model design selector
         let sessionCounter = 0;
 
-        const colorPresets = [
-            { id: 'blue', name: 'Electric Blue', bg: 'theme-blue-bg', dark: 'theme-blue-dark' },
-            { id: 'purple', name: 'Neon Purple', bg: 'theme-purple-bg', dark: 'theme-purple-dark' },
-            { id: 'emerald', name: 'Matrix Emerald', bg: 'theme-emerald-bg', dark: 'theme-emerald-dark' },
-            { id: 'amber', name: 'Cyber Amber', bg: 'theme-amber-bg', dark: 'theme-amber-dark' },
-            { id: 'red', name: 'Vibrant Red', bg: 'theme-red-bg', dark: 'theme-red-dark' },
-            { id: 'cyan', name: 'Laser Cyan', bg: 'theme-cyan-bg', dark: 'theme-cyan-dark' },
-            { id: 'rgb', name: 'RGB Dynamic Gamer', bg: 'theme-rgb-rgb', dark: 'theme-rgb-dark' }
-        ];
+        // Particle System for Unique Theme Animations
+        let particleCanvas = null;
+        let particleCtx = null;
+        let particles = [];
+        let particleAnimFrame = null;
 
-        const ballColors = [
-            'from-indigo-400 to-purple-600',
-            'from-sky-400 to-blue-600',
-            'from-emerald-300 to-teal-500',
-            'from-amber-300 to-orange-400',
-            'from-red-400 to-rose-600',
-            'from-cyan-300 to-blue-500',
-            'from-yellow-200 to-amber-400',
-            'from-slate-300 to-slate-500'
-        ];
-
+        // Audio and Speech Variables
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmTimer = null;
 
@@ -605,6 +698,219 @@
             "Jangan pernah menyerah! Kehormatan dan semangat pantang mundur adalah jiwa kita!",
             "Bangsa yang besar adalah bangsa yang berani dan mandiri!"
         ];
+
+        const ballColors = [
+            'from-indigo-400 to-purple-600',
+            'from-sky-400 to-blue-600',
+            'from-emerald-300 to-teal-500',
+            'from-amber-300 to-orange-400',
+            'from-red-400 to-rose-600',
+            'from-cyan-300 to-blue-500',
+            'from-yellow-200 to-amber-400',
+            'from-slate-300 to-slate-500'
+        ];
+
+        const colorPresets = [
+            { id: 'blue', name: 'Electric Blue', bg: 'theme-blue-bg', dark: 'theme-blue-dark' },
+            { id: 'purple', name: 'Neon Purple', bg: 'theme-purple-bg', dark: 'theme-purple-dark' },
+            { id: 'emerald', name: 'Matrix Emerald', bg: 'theme-emerald-bg', dark: 'theme-emerald-dark' },
+            { id: 'amber', name: 'Cyber Amber', bg: 'theme-amber-bg', dark: 'theme-amber-dark' },
+            { id: 'red', name: 'Vibrant Red', bg: 'theme-red-bg', dark: 'theme-red-dark' },
+            { id: 'cyan', name: 'Laser Cyan', bg: 'theme-cyan-bg', dark: 'theme-cyan-dark' },
+            { id: 'rgb', name: 'RGB Dynamic Gamer', bg: 'theme-rgb-rgb', dark: 'theme-rgb-dark' }
+        ];
+
+        function initThemeCanvas() {
+            particleCanvas = document.getElementById('themeCanvas');
+            if (!particleCanvas) return;
+            particleCtx = particleCanvas.getContext('2d');
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            spawnParticlesForTheme(currentGlobalTheme);
+            animateParticles();
+        }
+
+        function resizeCanvas() {
+            if (!particleCanvas) return;
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+        }
+
+        function spawnParticlesForTheme(theme) {
+            particles = [];
+            const count = 55;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            for (let i = 0; i < count; i++) {
+                if (theme === 'cyber') {
+                    // Theme 1: Cosmic Floating Nodes with Linking Distance Lines
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.9,
+                        vy: (Math.random() - 0.5) * 0.9,
+                        size: Math.random() * 2.5 + 1,
+                        color: 'rgba(99, 102, 241, ' + (Math.random() * 0.5 + 0.3) + ')'
+                    });
+                } else if (theme === 'neon') {
+                    // Theme 2: Pulsing Cyber Stars & Glowing Orbs
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        size: Math.random() * 4 + 2,
+                        pulse: Math.random() * Math.PI * 2,
+                        pulseSpeed: Math.random() * 0.05 + 0.02,
+                        color: 'rgba(192, 132, 252, ' + (Math.random() * 0.6 + 0.3) + ')'
+                    });
+                } else if (theme === 'emerald') {
+                    // Theme 3: Digital Matrix Data Rain Drops
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.15,
+                        vy: Math.random() * 2.5 + 1.2,
+                        size: Math.random() * 2 + 1,
+                        length: Math.random() * 14 + 6,
+                        opacity: Math.random() * 0.6 + 0.3,
+                        color: 'rgba(52, 211, 153, ' + (Math.random() * 0.6 + 0.3) + ')'
+                    });
+                } else if (theme === 'amber') {
+                    // Theme 4: Floating Ember Sparks with Turbulence Wave
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.7,
+                        vy: - (Math.random() * 1.5 + 0.5),
+                        size: Math.random() * 3.5 + 1,
+                        swing: Math.random() * Math.PI * 2,
+                        swingSpeed: Math.random() * 0.04 + 0.01,
+                        color: 'rgba(251, 191, 36, ' + (Math.random() * 0.7 + 0.25) + ')'
+                    });
+                }
+            }
+        }
+
+        function animateParticles() {
+            if (!particleCtx || !particleCanvas) return;
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+            const width = particleCanvas.width;
+            const height = particleCanvas.height;
+
+            // Draw Cyber Theme Connecting Web Lines
+            if (currentGlobalTheme === 'cyber') {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 110) {
+                            particleCtx.beginPath();
+                            particleCtx.strokeStyle = `rgba(99, 102, 241, ${0.25 * (1 - dist / 110)})`;
+                            particleCtx.lineWidth = 0.6;
+                            particleCtx.moveTo(particles[i].x, particles[i].y);
+                            particleCtx.lineTo(particles[j].x, particles[j].y);
+                            particleCtx.stroke();
+                        }
+                    }
+                }
+            }
+
+            particles.forEach(p => {
+                if (currentGlobalTheme === 'amber') {
+                    p.swing += p.swingSpeed;
+                    p.x += p.vx + Math.sin(p.swing) * 0.4;
+                    p.y += p.vy;
+                } else if (currentGlobalTheme === 'neon') {
+                    p.pulse += p.pulseSpeed;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                } else {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                }
+
+                // Screen boundaries bounce/reset logic
+                if (currentGlobalTheme === 'emerald') {
+                    if (p.y > height) { p.y = -20; p.x = Math.random() * width; }
+                } else if (currentGlobalTheme === 'amber') {
+                    if (p.y < -20) { p.y = height + 20; p.x = Math.random() * width; }
+                } else {
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+                }
+
+                // Render specific theme particle shapes & animations
+                particleCtx.beginPath();
+                if (currentGlobalTheme === 'emerald') {
+                    // Matrix Rain Line Effect
+                    const grad = particleCtx.createLinearGradient(p.x, p.y, p.x, p.y + p.length);
+                    grad.addColorStop(0, 'rgba(52, 211, 153, 0.05)');
+                    grad.addColorStop(1, p.color);
+                    particleCtx.strokeStyle = grad;
+                    particleCtx.lineWidth = p.size;
+                    particleCtx.moveTo(p.x, p.y);
+                    particleCtx.lineTo(p.x, p.y + p.length);
+                    particleCtx.stroke();
+                } else if (currentGlobalTheme === 'neon') {
+                    // Pulsing Glow Spheres
+                    const pSize = Math.max(1, p.size + Math.sin(p.pulse) * 1.5);
+                    particleCtx.fillStyle = p.color;
+                    particleCtx.shadowBlur = 10;
+                    particleCtx.shadowColor = 'rgba(192, 132, 252, 0.8)';
+                    particleCtx.arc(p.x, p.y, pSize, 0, Math.PI * 2);
+                    particleCtx.fill();
+                    particleCtx.shadowBlur = 0;
+                } else if (currentGlobalTheme === 'amber') {
+                    // Ember Sparks Glow
+                    particleCtx.fillStyle = p.color;
+                    particleCtx.shadowBlur = 8;
+                    particleCtx.shadowColor = 'rgba(251, 191, 36, 0.8)';
+                    particleCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    particleCtx.fill();
+                    particleCtx.shadowBlur = 0;
+                } else {
+                    // Cyber Nodes
+                    particleCtx.fillStyle = p.color;
+                    particleCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    particleCtx.fill();
+                }
+            });
+
+            particleAnimFrame = requestAnimationFrame(animateParticles);
+        }
+
+        function changeGlobalTheme(themeName) {
+            currentGlobalTheme = themeName;
+            document.body.className = `min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white text-slate-100 theme-${themeName}`;
+            
+            const themeSelect = document.getElementById('appThemeSelect');
+            if (themeSelect) themeSelect.value = themeName;
+
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                if (btn.dataset.theme === themeName) {
+                    btn.className = "theme-btn py-1.5 px-2 bg-slate-900 border-2 border-indigo-400 text-indigo-300 font-bold rounded-lg text-[11px] flex items-center justify-center gap-1 shadow-md";
+                } else {
+                    btn.className = "theme-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 rounded-lg text-[11px] font-semibold flex items-center justify-center gap-1";
+                }
+            });
+
+            spawnParticlesForTheme(themeName);
+            showToast(`Tema aplikasi diubah ke: ${themeName.toUpperCase()}`);
+        }
+
+        // Global variable to store preloaded Web Speech voices
+        let availableVoices = [];
+
+        function initVoices() {
+            if ('speechSynthesis' in window) {
+                availableVoices = window.speechSynthesis.getVoices();
+            }
+        }
 
         function changeVoiceMode(mode) {
             activeVoiceMode = mode;
@@ -738,10 +1044,11 @@
         function speakTextJokowi(currentWinnersList) {
             if (!isSoundEnabled) return;
             if ('speechSynthesis' in window) {
+                // Instantly cancel any ongoing speech to ensure immediate execution without delay
                 window.speechSynthesis.cancel(); 
 
                 let speechSentence = "";
-                const voices = window.speechSynthesis.getVoices();
+                const voices = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
                 let selectedVoice = null;
                 let pitchVal = 1.0;
                 let rateVal = 1.0;
@@ -749,29 +1056,29 @@
                 if (activeVoiceMode === 'jokowi') {
                     const randomQuote = jokowiMotivationalQuotes[Math.floor(Math.random() * jokowiMotivationalQuotes.length)];
                     if (currentWinnersList.length === 1) {
-                        speechSentence = `Ya... selamat kepada peserta terpilih... ${currentWinnersList[0]}... ${randomQuote}`;
+                        speechSentence = `Selamat kepada ${currentWinnersList[0]}. ${randomQuote}`;
                     } else {
-                        speechSentence = `Ya... selamat kepada para peserta terpilih... yaitu ${currentWinnersList.join(', ')}... ${randomQuote}`;
+                        speechSentence = `Selamat kepada ${currentWinnersList.join(', ')}. ${randomQuote}`;
                     }
                     pitchVal = 0.70;
-                    rateVal = 0.78;
+                    rateVal = 0.85;
                     selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
                 } 
                 else if (activeVoiceMode === 'prabowo') {
                     const randomQuote = prabowoMotivationalQuotes[Math.floor(Math.random() * prabowoMotivationalQuotes.length)];
                     if (currentWinnersList.length === 1) {
-                        speechSentence = `Saudara-saudara sekalian! Selamat kepada peserta terpilih... ${currentWinnersList[0]}! ${randomQuote}`;
+                        speechSentence = `Selamat kepada ${currentWinnersList[0]}! ${randomQuote}`;
                     } else {
-                        speechSentence = `Saudara-saudara sekalian! Selamat kepada para peserta terpilih yaitu ${currentWinnersList.join(', dan ')}! ${randomQuote}`;
+                        speechSentence = `Selamat kepada ${currentWinnersList.join(', dan ')}! ${randomQuote}`;
                     }
                     pitchVal = 0.85;
-                    rateVal = 0.92;
+                    rateVal = 0.95;
                     selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
                 } 
                 else if (activeVoiceMode === 'female') {
                     speechSentence = `${currentWinnersList.join(', ')}`;
                     pitchVal = 1.0; 
-                    rateVal = 0.90; 
+                    rateVal = 0.95; 
                     selectedVoice = voices.find(v => v.lang.includes('id') && (
                         v.name.toLowerCase().includes('gadis') || 
                         v.name.toLowerCase().includes('indira') || 
@@ -783,7 +1090,7 @@
                 else if (activeVoiceMode === 'male') {
                     speechSentence = `${currentWinnersList.join(', ')}`;
                     pitchVal = 0.95;
-                    rateVal = 0.90; 
+                    rateVal = 0.95; 
                     selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('male')) || voices.find(v => v.lang.includes('id'));
                 }
 
@@ -797,6 +1104,7 @@
                     utterance.voice = selectedVoice;
                 }
 
+                // Execute speech immediately
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -954,10 +1262,13 @@
             const defaultNames = ["Dr. Hendra Wijaya", "Prof. Anisa Fitri", "Budi Santoso (Mhs)", "Siti Rahmawati", "Rudi Hermawan", "Dewi Lestari", "Ahmad Fauzi", "Eka Putri"];
             document.getElementById('nameInput').value = defaultNames.join('\n');
             
+            initThemeCanvas();
             setMachineCount(1);
             updateParticipantsList();
             startBGM();
+            initVoices();
 
+            // Cek apakah pengguna baru pertama kali membuka web ini
             const hasSeenTutorial = localStorage.getItem('machineGashapon_seenTutorial');
             if (!hasSeenTutorial) {
                 const tutorialModal = document.getElementById('tutorialModal');
@@ -971,17 +1282,19 @@
                 if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
+                initVoices();
             }, { once: true });
 
             if ('speechSynthesis' in window) {
+                initVoices();
                 window.speechSynthesis.onvoiceschanged = () => {
-                    window.speechSynthesis.getVoices();
+                    initVoices();
                 };
             }
         });
 
         function startTutorialCountdown() {
-            let timeLeft = 12; // Disesuaikan agar pas (tidak terlalu cepat & tidak terlalu lama)
+            let timeLeft = 12; // Durasi pas dan nyaman dibaca (12 detik)
             const totalTime = 12;
             const timerEl = document.getElementById('tutorialCountdownTimer');
             const barEl = document.getElementById('tutorialProgressBar');
@@ -1075,6 +1388,24 @@
             }
         }
 
+        function changeMachineModel(modelId) {
+            currentMachineModel = modelId;
+            document.querySelectorAll('.model-btn').forEach(btn => {
+                if (btn.dataset.model === modelId) {
+                    btn.className = "model-btn py-1.5 px-2 bg-slate-900 border-2 border-indigo-400 text-indigo-300 font-bold rounded-lg text-[11px] flex items-center justify-center gap-1.5 shadow-md";
+                } else {
+                    btn.className = "model-btn py-1.5 px-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-400 font-semibold rounded-lg text-[11px] flex items-center justify-center gap-1.5";
+                }
+            });
+            renderMachines();
+            
+            let modelName = "Classic Capsule";
+            if (modelId === 'cyber') modelName = "Cyber Cube";
+            if (modelId === 'sphere') modelName = "Sphere Chamber";
+            if (modelId === 'arcade') modelName = "Retro Arcade";
+            showToast(`Model Mesin diubah ke: ${modelName}`);
+        }
+
         function renderMachines() {
             const gridContainer = document.getElementById('machinesGridContainer');
             if (!gridContainer) return;
@@ -1095,13 +1426,204 @@
                 machineEl.className = "relative w-full max-w-xs flex flex-col items-center select-none transition-all duration-300 bg-slate-900/40 p-4 rounded-3xl border border-slate-800/80 shadow-xl";
                 machineEl.id = `machineContainer_${i}`;
 
-                machineEl.innerHTML = `
-                    <div class="w-52 sm:w-60 h-8 ${colorPreset.bg} gacha-border rounded-t-3xl relative flex items-center justify-center shadow-lg z-20">
-                        <div class="absolute -top-3 w-14 h-3 bg-gradient-to-r from-slate-300 via-slate-100 to-slate-400 gacha-border rounded-t-md"></div>
-                        <div class="w-36 h-1 bg-white/40 rounded-full mb-1"></div>
-                    </div>
+                // Complete Machine Redesign for all 4 Models
+                let globeShapeClasses = "rounded-b-xl border-4 border-slate-900";
+                let topCapHtml = "";
+                let bodyHtml = "";
 
-                    <div class="relative w-52 sm:w-60 h-44 sm:h-52 gacha-globe-glass rounded-b-xl flex items-center justify-center overflow-hidden z-10" id="gachaGlobe_${i}">
+                if (currentMachineModel === 'cyber') {
+                    // MODEL 2: CYBER CUBE (Futuristic Angular Sci-Fi Design)
+                    globeShapeClasses = "rounded-xl border-2 border-cyan-400/80 shadow-[0_0_20px_rgba(6,182,212,0.4)] bg-slate-950/80";
+                    topCapHtml = `
+                        <div class="w-56 sm:w-64 h-9 ${colorPreset.bg} rounded-t-lg relative flex items-center justify-between px-3 shadow-lg z-20 border-b-2 border-cyan-400">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                                <span class="text-[9px] font-mono font-bold tracking-widest text-cyan-200">CYBER-SYSTEM // M0${i + 1}</span>
+                            </div>
+                            <i class="fa-solid fa-microchip text-cyan-300 text-xs"></i>
+                        </div>
+                    `;
+                    bodyHtml = `
+                        <div class="w-60 sm:w-68 ${colorPreset.bg} border-2 border-cyan-500/40 rounded-b-xl pt-3 pb-4 px-4 relative z-0 shadow-2xl flex flex-col items-center">
+                            <div class="w-full bg-slate-950/90 border border-cyan-500/50 rounded-xl p-2.5 flex flex-col items-center gap-2 relative shadow-inner">
+                                <div class="w-full flex justify-between items-center px-1">
+                                    <div class="px-2 py-0.5 bg-cyan-500/20 border border-cyan-400/40 rounded text-[9px] font-mono font-bold text-cyan-300">
+                                        NODE #${i + 1}
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                        <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                                    </div>
+                                </div>
+
+                                <div class="relative flex items-center justify-center my-1">
+                                    <button id="spinBtn_${i}" onclick="spinGashapon()" 
+                                        class="w-16 h-16 sm:w-18 sm:h-18 rounded-xl bg-slate-900 border-2 border-cyan-400 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)] active:scale-95 transition transform">
+                                        <div id="crankKnob_${i}" class="w-12 h-5 bg-gradient-to-r from-cyan-500 to-blue-600 border border-cyan-200 rounded flex items-center justify-center transition-transform duration-700">
+                                            <i class="fa-solid fa-bolt text-white text-xs"></i>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button onclick="spinGashapon()" id="spinBtnLabel_${i}" class="w-full py-1 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 font-mono text-[11px] font-bold rounded-lg transition border border-cyan-500/50 shadow flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-power-off text-[9px]"></i> EXECUTE SPIN
+                                </button>
+                            </div>
+
+                            <div class="w-full flex justify-between items-end mt-2.5 px-1">
+                                <div class="w-24 h-16 bg-slate-950 border-2 border-cyan-500/40 rounded-lg relative flex items-center justify-center p-1 overflow-hidden shadow-inner">
+                                    <div id="outputCapsulesContainer_${i}" class="relative z-10 flex items-center justify-center gap-1 flex-wrap max-w-full">
+                                        <p class="text-[9px] text-cyan-500/70 font-mono italic">PORT</p>
+                                    </div>
+                                </div>
+                                <div class="w-8 h-7 ${colorPreset.dark} border border-cyan-400/30 rounded-md"></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentMachineModel === 'sphere') {
+                    // MODEL 3: SPHERE CHAMBER (Orbital Bubble Design)
+                    globeShapeClasses = "rounded-full aspect-square border-4 border-sky-300/60 shadow-[0_0_25px_rgba(186,230,253,0.3)] bg-gradient-to-b from-sky-400/20 via-slate-900/60 to-slate-950";
+                    topCapHtml = `
+                        <div class="w-44 sm:w-52 h-8 ${colorPreset.bg} gacha-border rounded-t-full relative flex items-center justify-center shadow-lg z-20">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-slate-900 -top-4 absolute flex items-center justify-center shadow">
+                                <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
+                            </div>
+                        </div>
+                    `;
+                    bodyHtml = `
+                        <div class="w-56 sm:w-64 ${colorPreset.bg} gacha-border rounded-b-[40px] pt-4 pb-5 px-4 relative z-0 shadow-2xl flex flex-col items-center">
+                            <div class="w-full bg-slate-900/50 border-2 border-slate-900/40 rounded-3xl p-3 flex flex-col items-center gap-2 relative">
+                                <div class="w-full flex justify-center items-center">
+                                    <span class="text-[10px] font-game font-bold text-sky-200 bg-slate-950/60 px-3 py-0.5 rounded-full border border-sky-300/30">
+                                        ORBITAL MESIN #${i + 1}
+                                    </span>
+                                </div>
+
+                                <div class="relative flex items-center justify-center my-1">
+                                    <button id="spinBtn_${i}" onclick="spinGashapon()" 
+                                        class="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-b from-sky-100 via-sky-300 to-indigo-400 border-4 border-slate-900 flex items-center justify-center shadow-xl active:scale-95 transition transform">
+                                        <div id="crankKnob_${i}" class="w-11 h-11 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center shadow transition-transform duration-700">
+                                            <i class="fa-solid fa-sync text-sky-300 text-xs"></i>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button onclick="spinGashapon()" id="spinBtnLabel_${i}" class="w-full py-1.5 bg-indigo-950 hover:bg-indigo-900 text-sky-200 font-game text-[11px] rounded-2xl transition border border-indigo-400/40 shadow flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-circle-play text-[9px]"></i> PUTAR SPHERE
+                                </button>
+                            </div>
+
+                            <div class="w-full flex justify-center items-center mt-3">
+                                <div class="w-28 h-18 bg-slate-950 border-4 border-slate-900 rounded-2xl relative flex items-center justify-center p-1.5 overflow-hidden shadow-inner">
+                                    <div id="outputCapsulesContainer_${i}" class="relative z-10 flex items-center justify-center gap-1 flex-wrap max-w-full">
+                                        <p class="text-[9px] text-slate-500 italic font-medium text-center">Chamber Tray</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentMachineModel === 'arcade') {
+                    // MODEL 4: RETRO ARCADE (Retro Game Cabinet Design)
+                    globeShapeClasses = "rounded-t-2xl border-4 border-amber-400/70 shadow-[0_0_20px_rgba(245,158,11,0.3)] bg-slate-950";
+                    topCapHtml = `
+                        <div class="w-56 sm:w-64 h-11 ${colorPreset.bg} gacha-border rounded-t-2xl relative flex items-center justify-center shadow-lg z-20">
+                            <div class="flex items-center gap-2 px-3 py-1 bg-amber-400 text-slate-950 border-2 border-slate-900 rounded-lg shadow-md font-game font-bold text-xs tracking-wider">
+                                <i class="fa-solid fa-gamepad animate-bounce"></i> ARCADE GACHA #${i + 1}
+                            </div>
+                        </div>
+                    `;
+                    bodyHtml = `
+                        <div class="w-60 sm:w-68 ${colorPreset.bg} gacha-border rounded-b-xl pt-3 pb-4 px-4 relative z-0 shadow-2xl flex flex-col items-center">
+                            <div class="w-full bg-slate-950 border-2 border-amber-400/50 rounded-xl p-2.5 flex flex-col items-center gap-2 relative">
+                                <div class="w-full flex justify-between items-center px-1">
+                                    <span class="text-[9px] font-bold text-amber-300 font-game">INSERT COIN</span>
+                                    <div class="flex gap-1">
+                                        <div class="w-3 h-3 rounded-full bg-rose-500 border border-slate-900"></div>
+                                        <div class="w-3 h-3 rounded-full bg-yellow-400 border border-slate-900"></div>
+                                        <div class="w-3 h-3 rounded-full bg-blue-500 border border-slate-900"></div>
+                                    </div>
+                                </div>
+
+                                <div class="relative flex items-center justify-center my-1">
+                                    <button id="spinBtn_${i}" onclick="spinGashapon()" 
+                                        class="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-b from-rose-500 via-rose-600 to-rose-800 border-4 border-slate-900 flex items-center justify-center shadow-xl active:scale-95 transition transform">
+                                        <div id="crankKnob_${i}" class="w-8 h-10 bg-amber-400 border-2 border-slate-900 rounded-t-full transition-transform duration-700 flex items-center justify-center">
+                                            <div class="w-2 h-4 bg-slate-900 rounded-full"></div>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button onclick="spinGashapon()" id="spinBtnLabel_${i}" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-game font-bold text-[11px] rounded-lg transition border-2 border-slate-900 shadow flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-gamepad text-[10px]"></i> PRESS START
+                                </button>
+                            </div>
+
+                            <div class="w-full flex justify-between items-end mt-2.5 px-1">
+                                <div class="w-24 h-16 bg-slate-950 border-4 border-slate-900 rounded-t-lg relative flex items-center justify-center p-1 overflow-hidden shadow-inner">
+                                    <div id="outputCapsulesContainer_${i}" class="relative z-10 flex items-center justify-center gap-1 flex-wrap max-w-full">
+                                        <p class="text-[9px] text-amber-500/70 italic font-game text-center">Prize Gate</p>
+                                    </div>
+                                </div>
+                                <div class="w-8 h-7 ${colorPreset.dark} border-2 border-slate-900/60 rounded-md"></div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // MODEL 1: CLASSIC CAPSULE (Traditional Dome Design)
+                    topCapHtml = `
+                        <div class="w-52 sm:w-60 h-8 ${colorPreset.bg} gacha-border rounded-t-3xl relative flex items-center justify-center shadow-lg z-20">
+                            <div class="absolute -top-3 w-14 h-3 bg-gradient-to-r from-slate-300 via-slate-100 to-slate-400 gacha-border rounded-t-md"></div>
+                            <div class="w-36 h-1 bg-white/40 rounded-full mb-1"></div>
+                        </div>
+                    `;
+                    bodyHtml = `
+                        <div class="w-60 sm:w-68 ${colorPreset.bg} gacha-border rounded-b-3xl pt-3 pb-4 px-4 relative z-0 shadow-2xl flex flex-col items-center">
+                            <div class="w-full bg-slate-900/40 border-2 border-slate-900/30 rounded-2xl p-2.5 flex flex-col items-center gap-2 relative">
+                                <div class="w-full flex justify-between items-center px-1">
+                                    <div class="w-12 h-6 bg-white gacha-border rounded-md flex items-center justify-center">
+                                        <span class="text-[9px] font-bold text-slate-800">MESIN #${i + 1}</span>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-b from-slate-300 via-slate-100 to-slate-400 border-2 border-slate-900 flex items-center justify-center shadow-sm">
+                                        <div class="w-1 h-3 bg-slate-900 rounded-full"></div>
+                                    </div>
+                                </div>
+
+                                <div class="relative flex items-center justify-center my-0.5">
+                                    <div class="absolute w-20 h-20 pointer-events-none border-t-4 border-r-4 border-white rounded-full transform rotate-45 opacity-80"></div>
+                                    <button id="spinBtn_${i}" onclick="spinGashapon()" 
+                                        class="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 gacha-border flex items-center justify-center shadow-lg active:scale-95 transition transform group">
+                                        <div id="crankKnob_${i}" class="w-12 h-4 bg-slate-400 border-2 border-slate-900 rounded-md flex items-center justify-center shadow-md transition-transform duration-700">
+                                            <div class="w-8 h-1 bg-slate-800 rounded-full"></div>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <button onclick="spinGashapon()" id="spinBtnLabel_${i}" class="w-full py-1 bg-slate-900 hover:bg-slate-800 text-cyan-300 font-game text-[11px] rounded-xl transition border border-slate-700 shadow flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-play text-[9px]"></i> ▶ PUTAR MESIN
+                                </button>
+                            </div>
+
+                            <div class="w-full flex justify-between items-end mt-2.5 px-1">
+                                <div class="w-22 h-20 bg-slate-950 border-4 border-slate-900 rounded-t-full relative flex items-center justify-center p-1.5 overflow-hidden shadow-inner">
+                                    <div class="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900 pointer-events-none"></div>
+                                    <div id="outputCapsulesContainer_${i}" class="relative z-10 flex items-center justify-center gap-1 flex-wrap max-w-full">
+                                        <p class="text-[9px] text-slate-500 italic font-medium text-center">Tray</p>
+                                    </div>
+                                </div>
+                                <div class="w-8 h-7 ${colorPreset.dark} border-2 border-slate-900/40 rounded-lg"></div>
+                            </div>
+
+                            <div class="w-[110%] h-4 ${colorPreset.bg} gacha-border rounded-b-2xl -mb-7 mt-2 shadow-xl"></div>
+                        </div>
+                    `;
+                }
+
+                machineEl.innerHTML = `
+                    <!-- Top Cap -->
+                    ${topCapHtml}
+
+                    <!-- Globe / Chamber -->
+                    <div class="relative w-52 sm:w-60 h-44 sm:h-52 gacha-globe-glass ${globeShapeClasses} flex items-center justify-center overflow-hidden z-10" id="gachaGlobe_${i}">
                         <div class="absolute top-2 left-3 w-10 h-20 bg-gradient-to-b from-white/70 via-white/20 to-transparent rounded-full transform -rotate-45 blur-[0.5px] pointer-events-none z-20"></div>
 
                         <div id="shuffleDisplay_${i}" class="absolute z-30 inset-x-4 top-1/2 -translate-y-1/2 text-center bg-slate-900/90 py-2 px-2.5 rounded-xl border border-indigo-400/50 shadow-xl hidden">
@@ -1114,44 +1636,8 @@
                         <div id="ballsContainer_${i}" class="w-full h-full relative p-2.5 flex flex-wrap items-center justify-center content-end gap-1"></div>
                     </div>
 
-                    <div class="w-60 sm:w-68 ${colorPreset.bg} gacha-border rounded-b-3xl pt-3 pb-4 px-4 relative z-0 shadow-2xl flex flex-col items-center">
-                        <div class="w-full bg-slate-900/40 border-2 border-slate-900/30 rounded-2xl p-2.5 flex flex-col items-center gap-2 relative">
-                            <div class="w-full flex justify-between items-center px-1">
-                                <div class="w-12 h-6 bg-white gacha-border rounded-md flex items-center justify-center">
-                                    <span class="text-[9px] font-bold text-slate-800">MESIN #${i + 1}</span>
-                                </div>
-                                <div class="w-6 h-6 rounded-full bg-gradient-to-b from-slate-300 via-slate-100 to-slate-400 border-2 border-slate-900 flex items-center justify-center shadow-sm">
-                                    <div class="w-1 h-3 bg-slate-900 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            <div class="relative flex items-center justify-center my-0.5">
-                                <div class="absolute w-20 h-20 pointer-events-none border-t-4 border-r-4 border-white rounded-full transform rotate-45 opacity-80"></div>
-                                <button id="spinBtn_${i}" onclick="spinGashapon()" 
-                                    class="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 gacha-border flex items-center justify-center shadow-lg active:scale-95 transition transform group">
-                                    <div id="crankKnob_${i}" class="w-12 h-4 bg-slate-400 border-2 border-slate-900 rounded-md flex items-center justify-center shadow-md transition-transform duration-700">
-                                        <div class="w-8 h-1 bg-slate-800 rounded-full"></div>
-                                    </div>
-                                </button>
-                            </div>
-
-                            <button onclick="spinGashapon()" id="spinBtnLabel_${i}" class="w-full py-1 bg-slate-900 hover:bg-slate-800 text-cyan-300 font-game text-[11px] rounded-xl transition border border-slate-700 shadow flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-play text-[9px]"></i> ▶ PUTAR MESIN
-                            </button>
-                        </div>
-
-                        <div class="w-full flex justify-between items-end mt-2.5 px-1">
-                            <div class="w-22 h-20 bg-slate-950 border-4 border-slate-900 rounded-t-full relative flex items-center justify-center p-1.5 overflow-hidden shadow-inner">
-                                <div class="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900 pointer-events-none"></div>
-                                <div id="outputCapsulesContainer_${i}" class="relative z-10 flex items-center justify-center gap-1 flex-wrap max-w-full">
-                                    <p class="text-[9px] text-slate-500 italic font-medium text-center">Tray</p>
-                                </div>
-                            </div>
-                            <div class="w-8 h-7 ${colorPreset.dark} border-2 border-slate-900/40 rounded-lg"></div>
-                        </div>
-
-                        <div class="w-[110%] h-4 ${colorPreset.bg} gacha-border rounded-b-2xl -mb-7 mt-2 shadow-xl"></div>
-                    </div>
+                    <!-- Machine Body Base -->
+                    ${bodyHtml}
                 `;
 
                 gridContainer.appendChild(machineEl);
@@ -1256,6 +1742,8 @@
                 spinDuration = 3;
                 openDuration = 2;
                 isAutoRemoveEnabled = true;
+
+                changeGlobalTheme('cyber');
 
                 document.getElementById('nameInput').value = "Dr. Hendra Wijaya\nProf. Anisa Fitri\nBudi Santoso (Mhs)\nSiti Rahmawati\nRudi Hermawan\nDewi Lestari\nAhmad Fauzi\nEka Putri";
                 
